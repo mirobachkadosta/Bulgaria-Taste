@@ -1,4 +1,101 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #7f9651;
+  --color-primary: #020c16;
+  --color-primary-content: #fafafa;
+  --color-secondary: #515a63;
+  --color-secondary-content: #fff;
+  --color-accent: #195890;
+  --color-accent-content: #f6fafe;
+  --color-neutral: #ececec;
+  --color-neutral-content: #3d3d3d;
+  --color-info-content: #3d3d3d;
+  --color-info: #d2e3f2;
+  --color-info-content: #114777;
+  --color-success: #d2f2e1;
+  --color-success-content: #175835;
+  --color-error: #f2d6d2;
+  --color-error-content: #831b0c;
+  --color-warning: #f4e7c2;
+  --color-warning-content: #985015;
+  --color-base-100: #ffffff;
+  --color-base-200: #f2f2f2;
+  --color-base-300: #e5e6e6;
+}
+
+.dark {
+  --primary: #ffffff;
+  --primary-content: #020c16;
+  --accent: #95c3ed;
+  --accent-content: #020c16;
+  --secondary: #d1d5da;
+  --secondary-content: #34393f;
+  --neutral: #575757;
+  --neutral-content: #fffbfb;
+  --info-content: #fffbfb;
+  --info: #123757;
+  --info-content: #c3dbef;
+  --success: #1d5036;
+  --success-content: #d2fae3;
+  --error: #722d23;
+  --error-content: #f6dfdb;
+  --warning-content: #ffefe2;
+  --warning: #855506;
+  --base-100: #222426;
+  --base-200: #33383d;
+  --base-300: #3e4852;
+  --destructive: oklch(0.704 0.191 22.216);
+  --gradient-boxcolor: #4d4d4d;
+  --gradient-start: #e8e8e8;
+  --gradient-middle: #ffffff;
+  --gradient-end: #e8e8e8;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: "Courier New", Courier, monospace;
+}
+
+body[data-scroll-locked] {
+  margin: auto !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+p {
+  color: var(--secondary);
+  font-size: 16px;
+}
+h1 {
+  font-size: 36px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 20px;
+}
+h4,
+h5 {
+  font-size: 18px;
+}
+h6 {
+  font-size: 16px;
+}
+.body-1 {
+  font-size: 16px;
+}
+
+.content-container {
+  max-width: 1332px;
+  margin: 0px auto;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.full-width-section {
+  width: clamp(100%, 100vw, 1920px);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}

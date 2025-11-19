@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { Button } from "../ui/button";
 
 const NAV_DEFAULT_ELEMENTS = [
   { title: "Home", url: "/" },
@@ -8,8 +9,8 @@ const NAV_DEFAULT_ELEMENTS = [
 ];
 export default function Header() {
   return (
-    <header className="border-b !bg-base-200 py-2 lg:py-3 border-base-300 sticky top-0 lg:relative lg:top-auto z-50">
-      <div className="m-auto content-container flex items-center justify-between">
+    <header className="border-b bg-base-200 py-2 lg:py-3 border-base-300 sticky top-0 lg:relative lg:top-auto z-50">
+      <div className="m-auto content-container flex items-center justify-between px-4">
         <div className="flex items-center lg:gap-8">
           <Link
             to="/"
@@ -20,16 +21,18 @@ export default function Header() {
             Bulgaria Taste
           </Link>
         </div>
-        <nav className="hidden invisible lg:flex lg:visible lg:px-4 lg:gap-9 text-sm text-primary font-medium">
-          {NAV_DEFAULT_ELEMENTS.map(
-            (element: { title: string; url: string }, indx: number) => (
-              <Link key={indx} to={element.url}>
-                {element.title}
-              </Link>
-            )
-          )}
-        </nav>
-
+        <div className="flex items-center gap-3">
+          <nav className="hidden invisible lg:flex lg:visible lg:px-4 lg:gap-9 text-sm text-primary font-medium">
+            {NAV_DEFAULT_ELEMENTS.map(
+              (element: { title: string; url: string }, indx: number) => (
+                <Link key={indx} to={element.url}>
+                  {element.title}
+                </Link>
+              )
+            )}
+          </nav>
+          <Button>Login</Button>
+        </div>
         {/* <div className="lg:hidden flex gap-4">
           {!userState.user?.id ? (
             <Button
