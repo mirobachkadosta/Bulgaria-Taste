@@ -2,10 +2,9 @@ import { Link } from "react-router";
 import { Button } from "../ui/button";
 
 const NAV_DEFAULT_ELEMENTS = [
-  { title: "Home", url: "/" },
-  { title: "Restaurants", url: "/restaurants" },
-  { title: "About", url: "/about" },
-  { title: "Contact", url: "/contact" },
+  { title: "Маршрути", url: "/restaurants" },
+  { title: "За нас", url: "/about" },
+  { title: "Контакти", url: "/contact" },
 ];
 export default function Header() {
   return (
@@ -31,7 +30,7 @@ export default function Header() {
               )
             )}
           </nav>
-          <Button>Login</Button>
+          <Button>Вход</Button>
         </div>
         {/* <div className="lg:hidden flex gap-4">
           {!userState.user?.id ? (
