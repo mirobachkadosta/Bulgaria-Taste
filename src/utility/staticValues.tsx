@@ -6,17 +6,10 @@ import {
   Backpack,
   CookingPot,
 } from "lucide-react";
-import { type JSX } from "react";
 
 const commonIconStyles = "stroke-1 stroke-primary-content size-8";
 
-type HowItWorksItem = {
-  icon: JSX.Element;
-  header: string;
-  description: string;
-};
-
-export const HOW_IT_WORKS_VALUES: HowItWorksItem[] = [
+export const HOW_IT_WORKS_VALUES = [
   {
     icon: <User className={commonIconStyles} />,
     header: "Създайте своя профил",
@@ -66,6 +59,60 @@ export const WHY_US_VALUES = [
       "Виж статистика – откъде идват гостите и колко пътуват.",
       "Плати само за реални посещения (Pay Per Visit модел).",
       "Създавай оферти в реално време – Happy Hour, Седмично меню, Road Trip промо.",
+    ],
+  },
+];
+
+export const FOOTER_VALUES = [
+  {
+    header: "Полезно",
+    items: [
+      {
+        subHeader: "Често задавани въпроси",
+        link: "/",
+      },
+      {
+        subHeader: "Форма за контакт",
+        link: "/",
+      },
+      {
+        subHeader: "Търси по населено място",
+        link: "/",
+      },
+      {
+        subHeader: "Ресторанти",
+        link: "/",
+      },
+    ],
+  },
+  {
+    header: "За бизнеси",
+    items: [
+      {
+        subHeader: "Ресторанти",
+        link: "/",
+      },
+      {
+        subHeader: "Партньорска програма",
+        link: "/",
+      },
+      {
+        subHeader: "Регитрирай бизнеса си",
+        link: "/",
+      },
+    ],
+  },
+  {
+    header: "Правни документи",
+    items: [
+      {
+        subHeader: "Условия за ползване",
+        link: "/",
+      },
+      {
+        subHeader: "Политика за поверителност",
+        link: "/",
+      },
     ],
   },
 ];

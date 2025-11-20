@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Button } from "../ui/button";
+import ThemeToggleButton from "../theme-toggle/ThemeToggle";
 
 const NAV_DEFAULT_ELEMENTS = [
   { title: "Маршрути", url: "/restaurants" },
@@ -30,7 +31,10 @@ export default function Header() {
               )
             )}
           </nav>
-          <Button>Вход</Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggleButton />
+            <Button>Вход</Button>
+          </div>
         </div>
         {/* <div className="lg:hidden flex gap-4">
           {!userState.user?.id ? (
