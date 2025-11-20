@@ -7,7 +7,7 @@ export default function WhyUsSection() {
         <HeaderSection
           className="lg:pt-12! pt-6!"
           header="Защо да изберете Bulgaria Taste?"
-          subHeader="Пътувай умно. Яж автентично. Спестявай реално."
+          subHeader="Мястото, където пътешествениците и местната кухня се среща."
           typeOfHeader="h2"
         />
         <div className="grid lg:grid-cols-2 lg:grid-rows-1 gap-12 grid-rows-2 grid-cols-1 items-start bg-base-100 px-12 py-12 rounded-2xl w-full shadow-xl">
@@ -25,7 +25,9 @@ export default function WhyUsSection() {
               </div>
               <ul className="list-disc list-inside flex flex-col gap-2">
                 {section.items.map((item, itemIndex) => (
-                  <li key={itemIndex}>{item}</li>
+                  <li className="text-secondary" key={itemIndex}>
+                    {item}
+                  </li>
                 ))}
               </ul>
               {index < WHY_US_VALUES.length - 1 && (
