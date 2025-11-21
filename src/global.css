@@ -1,139 +1,118 @@
-/* Tailwind CSS Directives - DO NOT REMOVE */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@font-face {
+  font-family: Comfortaa;
+  src: url("./assets/font/Comfortaa-Regular.ttf");
+}
+@import "tailwindcss";
 
-/* 
-  =========================================
-  GOOGLE FONTS - Applied to entire app
-  =========================================
-  
-  Default font: Poppins (body text)
-  Headings font: Playfair Display (use font-display class)
-  
-  CHANGE FONTS:
-  1. Update Google Fonts link in index.html
-  2. Update fontFamily in tailwind.config.js
-*/
-@layer base {
-  body {
-    @apply font-sans; /* Applies Poppins to entire app */
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-display; /* Applies Playfair Display to all headings */
-  }
+@theme {
+  --color-primary: #020c16;
+  --color-primary-content: #fafafa;
+  --color-secondary: #515a63;
+  --color-secondary-content: #fff;
+  --color-accent: #195890;
+  --color-accent-content: #f6fafe;
+  --color-neutral: #ececec;
+  --color-neutral-content: #3d3d3d;
+  --color-info-content: #3d3d3d;
+  --color-info: #d2e3f2;
+  --color-info-content: #114777;
+  --color-success: #d2f2e1;
+  --color-success-content: #175835;
+  --color-error: #f2d6d2;
+  --color-error-content: #831b0c;
+  --color-warning: #f4e7c2;
+  --color-warning-content: #985015;
+  --color-base-100: #ffffff;
+  --color-base-200: #f2f2f2;
+  --color-base-300: #e5e6e6;
 }
 
-/* 
-  =========================================
-  CUSTOM COLORS - Light & Dark Mode
-  =========================================
-  
-  HOW TO ADD NEW COLORS:
-  1. Add your color variable here in RGB format (e.g., --my-color: 255 100 50)
-  2. Add the same variable to tailwind.config.js (see instructions there)
-  3. Use in your components: bg-my-color, text-my-color, border-my-color, etc.
-  
-  HOW TO CONVERT HEX TO RGB:
-  - Hex: #7f9651 → RGB: 127 150 81
-  - Use online converter: https://www.rapidtables.com/convert/color/hex-to-rgb.html
-  - Or use VS Code color picker (hover over hex value)
-  
-  FORMAT: --color-name: R G B (space-separated, no commas!)
-*/
-
-@layer base {
-  /* Light Mode Colors (Default) */
-  :root {
-    /* Primary - Main brand color (green) */
-    --primary: 127 150 81; /* #7f9651 */
-    --primary-focus: 108 130 68; /* #6c8244 - Darker shade for hover/focus */
-
-    /* Accent - Secondary brand color (yellow) */
-    --accent: 247 221 138; /* #f7dd8a */
-    --accent-focus: 243 208 107; /* #f3d06b - Darker shade */
-
-    /* Warning - Alert/caution color (orange) */
-    --warning: 244 178 55; /* #f4b237 */
-    --warning-focus: 220 158 46; /* #dc9e2e - Darker shade */
-
-    /* Error - Danger/error color (red) */
-    --error: 163 45 0; /* #a32d00 */
-    --error-focus: 140 38 0; /* #8c2600 - Darker shade */
-
-    /* Success - Success/positive color (green) */
-    --success: 115 162 96; /* #73a260 */
-
-    /* Base - Background colors */
-    --base-100: 255 255 255; /* #ffffff - Main background (white) */
-    --base-200: 246 245 235; /* #f6f5eb - Secondary background */
-    --base-300: 228 226 211; /* #e4e2d3 - Tertiary background */
-
-    /* Neutral - Text & borders */
-    --neutral: 62 62 62; /* #3e3e3e - Main text color */
-    --neutral-focus: 42 42 42; /* #2a2a2a - Darker text */
-
-    /* ADD YOUR NEW COLORS HERE (Light Mode):
-    --my-custom-color: R G B;
-    --my-custom-color-focus: R G B;
-    */
-  }
-
-  /* Dark Mode Colors - Add 'dark' class to <html> or <body> to activate */
-  .dark {
-    /* Primary - Adjusted for dark background */
-    --primary: 111 134 65; /* #6f8641 */
-    --primary-focus: 93 115 55; /* #5d7337 */
-
-    /* Accent - Adjusted for dark background */
-    --accent: 217 199 119; /* #d9c777 */
-    --accent-focus: 196 179 96; /* #c4b360 */
-
-    /* Warning - Adjusted for dark background */
-    --warning: 212 154 48; /* #d49a30 */
-    --warning-focus: 187 135 42; /* #bb872a */
-
-    /* Error - Adjusted for dark background */
-    --error: 143 38 0; /* #8f2600 */
-    --error-focus: 122 31 0; /* #7a1f00 */
-
-    /* Success - Adjusted for dark background */
-    --success: 98 137 79; /* #62894f */
-
-    /* Base - Dark backgrounds */
-    --base-100: 28 28 28; /* #1c1c1c - Main dark background */
-    --base-200: 37 37 37; /* #252525 - Secondary dark background */
-    --base-300: 46 46 46; /* #2e2e2e - Tertiary dark background */
-
-    /* Neutral - Light text for dark mode */
-    --neutral: 204 204 204; /* #cccccc - Main light text */
-    --neutral-focus: 255 255 255; /* #ffffff - Pure white text */
-
-    /* ADD YOUR NEW COLORS HERE (Dark Mode):
-    --my-custom-color: R G B;
-    --my-custom-color-focus: R G B;
-    */
-  }
+.dark {
+  --color-primary: #ffffff;
+  --color-primary-content: #020c16;
+  --color-accent: #95c3ed;
+  --color-accent-content: #020c16;
+  --color-secondary: #d1d5da;
+  --color-secondary-content: #34393f;
+  --color-neutral: #575757;
+  --color-neutral-content: #fffbfb;
+  --color-info-content: #fffbfb;
+  --color-info: #123757;
+  --color-info-content: #c3dbef;
+  --color-success: #1d5036;
+  --color-success-content: #d2fae3;
+  --color-error: #722d23;
+  --color-error-content: #f6dfdb;
+  --color-warning-content: #ffefe2;
+  --color-warning: #855506;
+  --color-base-100: #222426;
+  --color-base-200: #33383d;
+  --color-base-300: #3e4852;
+  --color-destructive: oklch(0.704 0.191 22.216);
+  --gradient-boxcolor: #4d4d4d;
+  --gradient-start: #e8e8e8;
+  --gradient-middle: #ffffff;
+  --gradient-end: #e8e8e8;
 }
 
-/* 
-  =========================================
-  CUSTOM UTILITY CLASSES (Optional)
-  =========================================
-  
-  Add custom CSS classes here if you need special styles
-  that Tailwind doesn't provide out of the box.
-  
-  Example:
-  @layer components {
-    .btn-primary {
-      @apply bg-primary text-white px-4 py-2 rounded hover:bg-primary-focus;
-    }
-  }
-*/
+html {
+  scroll-behavior: smooth;
+  font-family: "Comfortaa", cursive, sans-serif;
+}
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+body[data-scroll-locked] {
+  margin: auto !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+p {
+  color: var(--color-secondary);
+  font-size: 16px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-primary);
+}
+h1 {
+  font-size: 36px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 20px;
+}
+h4,
+h5 {
+  font-size: 18px;
+}
+h6 {
+  font-size: 16px;
+}
+.body-1 {
+  font-size: 16px;
+}
+
+.content-container {
+  max-width: 1332px;
+  margin: 0px auto;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.full-width-section {
+  width: clamp(100%, 100vw, 1920px);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
