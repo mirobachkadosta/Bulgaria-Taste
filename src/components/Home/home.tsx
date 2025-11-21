@@ -1,9 +1,11 @@
 import HowItWorks from "../HomePage/how-it-works/HowItWorks";
 import WhyUsSection from "../HomePage/why-us/WhyUs";
 import Footer from "../footer/Footer";
+import LatestUploaded from "../HomePage/latest-uploaded/LatestUploaded";
 export default function Home() {
   return (
     <div className="content-container">
+      <LatestUploaded />
       <WhyUsSection />
       <HowItWorks />
       <Footer />
