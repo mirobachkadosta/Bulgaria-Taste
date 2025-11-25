@@ -3,7 +3,8 @@ import { Button } from "../ui/button";
 import ThemeToggleButton from "../theme-toggle/ThemeToggle";
 
 const NAV_DEFAULT_ELEMENTS = [
-  { title: "Маршрути", url: "/restaurants" },
+  { title: "Ресторани", url: "/restaurants" },
+  { title: "Регистрация", url: "/register" },
   { title: "За нас", url: "/about" },
   { title: "Контакти", url: "/contact" },
 ];
@@ -16,7 +17,7 @@ export default function Header() {
             to="/"
             aria-label="Върни се към началната страница"
             role="button"
-            className="cursor-pointer text-primary font-bold"
+            className="cursor-pointer text-primary! font-bold"
           >
             Bulgaria Taste
           </Link>

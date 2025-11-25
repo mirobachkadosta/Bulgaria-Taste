@@ -116,3 +116,48 @@ h6 {
   left: 50%;
   transform: translateX(-50%);
 }
+
+.icon-link {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.icon-link:hover {
+  transform: scale(1.1);
+  text-decoration: none !important;
+}
+
+.icon-link::after,
+.icon-link:hover::after {
+  content: none !important;
+}
+
+a {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color: var(--primary);
+}
+
+a:hover {
+  text-underline-offset: 3px;
+  text-decoration-color: var(--primary);
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary);
+  transition: width 0.5s ease;
+  transform: translateX(-50%);
+}
+
+a:hover::after {
+  width: 100%;
+  left: 0;
+  transform: none;
+}
