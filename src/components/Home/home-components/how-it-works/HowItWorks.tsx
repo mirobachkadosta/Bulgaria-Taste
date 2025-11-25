@@ -1,5 +1,5 @@
 import { HOW_IT_WORKS_VALUES } from "@/utility/staticValues";
-import { HeaderSection } from "../../HeaderSection/HeaderSepartor";
+import { HeaderSection } from "../../../HeaderSection/HeaderSepartor";
 
 export default function HowItWorks() {
   return (
