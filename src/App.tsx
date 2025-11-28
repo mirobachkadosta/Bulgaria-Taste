@@ -1,6 +1,6 @@
 import Header from "./components/header/Header";
 import { Route, Routes } from "react-router";
-import Home from "./components/Home/home";
+import Home from "./components/home/Home";
 import "./global.css";
 import Footer from "./components/footer/Footer";
 import AboutUs from "./components/about-us/AboutUs";
@@ -10,6 +10,8 @@ import {
   registerLink,
   contactUsLink,
 } from "./utility/links";
+import Register from "./components/register/Register";
+import Restaurants from "./components/restaurants/Restaurants";
 function App() {
   return (
     <>
@@ -25,8 +27,8 @@ function App() {
           }
         />
         <Route path={contactUsLink} element={<div>Contact Page</div>} />
-        <Route path={restaurantsLink} element={<div>Restaurants Page</div>} />
-        <Route path={registerLink} element={<div>Register Page</div>} />
+        <Route path={restaurantsLink} element={<Restaurants />} />
+        <Route path={registerLink} element={<Register />} />
       </Routes>
       <Footer />
     </>
