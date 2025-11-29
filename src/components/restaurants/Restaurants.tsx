@@ -31,11 +31,13 @@ const Restaurants = () => {
       try {
         const { data, error } = await supabase
           .from("restaurants")
-          .select(`*, location: location_id (name)`);
+          .select(`*, location: locations (name)`);
         if (error) {
           console.error("Error fetching restaurants from db:", error);
           return;
         }
+        console.log(data, "sb data");
+
         setRestaurants(data);
       } catch (err) {
         console.error("Server errorfetching restaurants:", err);

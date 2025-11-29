@@ -6,13 +6,13 @@ import { globalStore } from "@/store/globalStore";
 import { Link, useNavigate } from "react-router";
 import { HeaderSection } from "../HeaderSection/HeaderSepartor";
 
-const Register = () => {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { isLoading, setIsLoading, setUser, setAlertStatus } = globalStore();
   const navigate = useNavigate();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       setAlertStatus({
@@ -29,51 +29,60 @@ const Register = () => {
       return;
     }
     setIsLoading(true);
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    const { data, error: signInError } = await supabase.auth.signInWithPassword(
+      {
+        email: email.trim(),
+        password: password.trim(),
+      }
+    );
     setIsLoading(false);
-    if (signUpError) {
+    if (signInError) {
       if (
-        signUpError.message.includes("already registered") ||
-        signUpError.message.includes("User already registered")
+        signInError.message
+          .toLowerCase()
+          .includes("invalid login credentials") ||
+        signInError.message.toLowerCase().includes("invalid email or password")
       ) {
         setAlertStatus({
           status: "error",
-          statusHeader: "Този имейл вече е регистриран.",
+          statusHeader: "Грешен имейл или парола.",
+        });
+      } else if (signInError.message.toLowerCase().includes("user not found")) {
+        setAlertStatus({
+          status: "error",
+          statusHeader: "Потребител с този имейл не съществува.",
         });
       } else {
         setAlertStatus({
           status: "error",
-          statusHeader: "Възникна грешка при регистрацията. Опитайте отново.",
+          statusHeader: "Възникна грешка при входа. Опитайте отново.",
         });
       }
       return;
     }
-    if (data.user && data.user.email) {
+    if (data.user) {
       setUser({
-        email: data.user.email,
+        email: data.user.email || "",
       });
+      setAlertStatus({
+        status: "success",
+        statusHeader: "Успешно влязохте във вашият профил!",
+        statusContent: "Прехвърляне към началната страница...",
+      });
+      setEmail("");
+      setPassword("");
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     }
-    setAlertStatus({
-      status: "success",
-      statusHeader:
-        "Успешна регистрация! Прехвърляне към началната страница...",
-    });
-    setEmail("");
-    setPassword("");
-    setTimeout(() => {
-      navigate("/");
-    }, 1000);
   };
 
   return (
     <main className="bg-base-100 full-width-section lg:pb-12 pb-6">
       <div className="flex flex-col content-container items-center justify-center">
-        <HeaderSection header="Регистрация" />
+        <HeaderSection header="Вход" />
         <form
-          onSubmit={handleRegister}
+          onSubmit={handleLogin}
           className="flex flex-col gap-4 w-full max-w-xs"
         >
           <Input
@@ -95,16 +104,16 @@ const Register = () => {
             className="btn btn-primary"
             disabled={isLoading}
           >
-            {isLoading ? "Регистриране..." : "Регистрирай се"}
+            {isLoading ? "Влизане..." : "Вход"}
           </Button>
           <div className="flex flex-col gap-2 text-center">
             <p>
-              Вече имате акаунт?{" "}
+              Нямате акаунт?{" "}
               <Link
-                to="/login"
-                className="text-primary underline! underline-offset-2!"
+                to="/register"
+                className="text-primary underline! underline-offset-2"
               >
-                Влезте тук
+                Регистрирайте се тук
               </Link>
             </p>
           </div>
@@ -112,6 +121,4 @@ const Register = () => {
       </div>
     </main>
   );
-};
-
-export default Register;
+}
