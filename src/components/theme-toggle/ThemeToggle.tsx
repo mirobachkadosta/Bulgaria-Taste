@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Flashlight, FlashlightOff } from "lucide-react";
+import { globalStore } from "@/store/globalStore";
 
 export default function ThemeToggleButton() {
   const [isDark, setIsDark] = useState<boolean>(true);
+  const { setTheme } = globalStore();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -13,23 +15,23 @@ export default function ThemeToggleButton() {
       "(prefers-color-scheme: dark)"
     ).matches;
 
-    //TODO :  add global context for setTheme = useContext() ;
+    setTheme(prefersDark ? "dark" : "light");
 
     if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
       document.documentElement.classList.add("dark");
       setIsDark(true);
-      //TODO : setTheme("dark")
+      setTheme("dark");
     } else {
       document.documentElement.classList.remove("dark");
       setIsDark(false);
-      //TODO : setTheme("light");
+      setTheme("light");
     }
   }, [setIsDark]);
 
   const toggleTheme = () => {
     const newTheme = isDark ? "light" : "dark";
     localStorage.setItem("theme", newTheme);
-    // TODO : setTheme(newTheme) ;
+    setTheme(newTheme);
     document.documentElement.classList.toggle("dark");
     setIsDark(!isDark);
   };
