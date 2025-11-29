@@ -31,9 +31,7 @@ const Restaurants = () => {
       try {
         const { data, error } = await supabase
           .from("restaurants")
-          .select(
-            `*, location: location_id (name), type_of_food: type_food_id (name)`
-          );
+          .select(`*, location: location_id (name)`);
         if (error) {
           console.error("Error fetching restaurants from db:", error);
           return;
@@ -133,7 +131,7 @@ const Restaurants = () => {
   //     useMobileImport<FilterProps>(() => import("components/filters/mobile"));
 
   return (
-    <main className="full-width-section bg-base-100">
+    <main className="full-width-section bg-base-100 lg:pb-24 pb-12">
       <div className="flex flex-col content-container lg:gap-12 lg:pt-12">
         <HeaderSection
           header="Ресторанти"
@@ -157,7 +155,7 @@ const Restaurants = () => {
             ))}
           </div>
         ) : (
-          <p>
+          <p className="text-center">
             В момента няма ресторанти, които може да Ви покажем, на база
             избраните от Вас филтри!
           </p>
