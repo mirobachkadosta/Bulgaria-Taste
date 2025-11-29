@@ -9,3 +9,17 @@ export type RestaurantCardType = {
     name: string | null;
   } | null;
 };
+
+export type User = {
+  email: string;
+};
+
+export type AlertStatusType = {
+  status: "error" | "success";
+  statusHeader: string;
+  statusContent?: string;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+};
