@@ -17,6 +17,8 @@ import Restaurants from "./components/restaurants/Restaurants";
 import { globalStore } from "./store/globalStore";
 import { useEffect } from "react";
 import supabase from "./supabase";
+import RedirectAuth from "./components/redirect-auth-users/RedirectAuth";
+import AddRestaurant from "./components/add-restaurant/AddRestaurant";
 function App() {
   const setUser = globalStore((state) => state.setUser);
 
@@ -52,10 +54,25 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path={aboutUsLink} element={<AboutUs />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <RedirectAuth>
+              <Login />
+            </RedirectAuth>
+          }
+        />
         <Route path={contactUsLink} element={<div>Contact Page</div>} />
         <Route path={restaurantsLink} element={<Restaurants />} />
-        <Route path={registerLink} element={<Register />} />
+        <Route
+          path={registerLink}
+          element={
+            <RedirectAuth>
+              <Register />
+            </RedirectAuth>
+          }
+        />
+        <Route path="/add-restaurant" element={<AddRestaurant />} />
       </Routes>
       <Alert />
       <Footer />

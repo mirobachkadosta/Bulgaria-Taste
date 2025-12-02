@@ -1,136 +1,65 @@
 "use client";
 
-// import { BusinessCard as BusinessCardType } from "app/api/user-profile/favourite/get/route";
 import { useState, useEffect } from "react";
-// import { PAGE_LIMIT_24 } from "utility/constants";
-// import { FilterProps } from "components/filters/desktop";
-// import { FilterState } from "utility/types/filter-service";
-// import { useFilterService } from "utility/hooks/useFilteredData";
-// import { useMobileImport } from "utility/hooks/useMobileImport";
 import type { RestaurantCardType } from "@/utility/types";
 import RestaurantCard from "./restaurant-card/RestaurantCards";
 import { HeaderSection } from "../HeaderSection/HeaderSepartor";
 import { supabase } from "@/supabase/supabase";
-// const BusinessCard = dynamic(() => import("components/business-card"));
-
-// const PaginationComponent = dynamic(() => import("components/pagination"));
-
-// const DesktopFilters = dynamic(() => import("components/filters/desktop"));
-
-// type SpecialistsProps = {
-//   restaurants: RestaurantCardType[];
-//   countOfPages: number;
-// };
+import { globalStore } from "@/store/globalStore";
 
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState<RestaurantCardType[]>([]);
-  console.log(restaurants);
+  const { setAlertStatus } = globalStore();
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const { data, error } = await supabase
+        const { data: restaurantsData, error } = await supabase
           .from("restaurants")
           .select(`*, location: locations (name)`);
         if (error) {
-          console.error("Error fetching restaurants from db:", error);
+          setAlertStatus({
+            status: "error",
+            statusHeader: "Грешка",
+            statusContent:
+              "Грешка при зареждане на ресторантите: " + error.message,
+          });
           return;
         }
-        console.log(data, "sb data");
 
-        setRestaurants(data);
+        const { data: foodData, error: foodTypeError } = await supabase
+          .from("type_food")
+          .select();
+
+        if (foodTypeError) {
+          setAlertStatus({
+            status: "error",
+            statusHeader: "Грешка",
+            statusContent: "Грешка при зареждане на типовете кухня",
+          });
+        }
+        const restaurantsWithFoodNames = restaurantsData.map((restaurant) => ({
+          ...restaurant,
+          food_names: restaurant.types_of_food
+            ? restaurant.types_of_food
+                .map((id: string) => foodData?.find((ft) => ft.id == id)?.name)
+                .filter(Boolean)
+            : [],
+        }));
+
+        setRestaurants(restaurantsWithFoodNames);
       } catch (err) {
-        console.error("Server errorfetching restaurants:", err);
+        setAlertStatus({
+          status: "error",
+          statusHeader: "Грешка",
+          statusContent: "Грешка при зареждане на ресторантите: " + err,
+        });
         setRestaurants([]);
       }
     };
 
     fetchRestaurants();
   }, []);
-
-  //   const [pages, setPages] = useState<number>(countOfPages);
-  //   const [currentPage, setCurrentPage] = useState<number>(1);
-  //   const [currentFilters, setCurrentFilters] = useState<FilterState>({});
-
-  //   const { fetchFilteredData, hasActiveFilters, getCachedData } =
-  //     useFilterService<RestaurantCardType>({
-  //       apiEndpoints: {
-  //         list: "/specialists",
-  //         count: "/business/count",
-  //       },
-  //       buildQueryParams: (filters, page) => {
-  //         const params = new URLSearchParams();
-  //         params.set("page", String(page));
-
-  //         if (filters.categoryId && filters.categoryId !== 0) {
-  //           params.set("catId", String(filters.categoryId));
-  //         }
-  //         if (filters.location) {
-  //           params.set("locId", String(filters.location));
-  //         }
-  //         if (filters.rating != null) {
-  //           params.set("raiting", String(Math.round(filters.rating)));
-  //         }
-
-  //         return `?${params.toString()}`;
-  //       },
-  //       enableCache: true,
-  //     });
-
-  //   const applyFilters = useCallback(
-  //     async (
-  //       categoryId?: number,
-  //       location?: number | string,
-  //       rating?: number | null,
-  //     ) => {
-  //       const newFilters: FilterState = { categoryId, location, rating };
-  //       setCurrentFilters(newFilters);
-  //       setCurrentPage(1);
-
-  //       if (!hasActiveFilters(newFilters)) {
-  //         setBusinesses(restaurants);
-  //         setPages(countOfPages);
-  //         setCurrentPage(1);
-  //         return;
-  //       }
-
-  //       try {
-  //         const { data, count } = await fetchFilteredData(newFilters, 1);
-  //         setBusinesses(data);
-  //         setPages(Math.ceil(count / PAGE_LIMIT_24));
-  //         setCurrentPage(1);
-  //       } catch (error) {
-  //         console.error("Error fetching filtered data:", error);
-  //       }
-  //     },
-  //     [restaurants, countOfPages, hasActiveFilters, fetchFilteredData],
-  //   );
-
-  //   const changePage = useCallback(
-  //     async (newPage: number) => {
-  //       if (newPage === currentPage) return;
-
-  //       const cachedData = getCachedData(currentFilters, newPage);
-
-  //       if (cachedData) {
-  //         setBusinesses(cachedData);
-  //         setCurrentPage(newPage);
-  //         return;
-  //       }
-
-  //       try {
-  //         const { data } = await fetchFilteredData(currentFilters, newPage);
-  //         setBusinesses(data);
-  //         setCurrentPage(newPage);
-  //       } catch (error) {
-  //         console.error("Error fetching page data:", error);
-  //       }
-  //     },
-  //     [currentPage, currentFilters, getCachedData, fetchFilteredData],
-  //   );
-
-  //   const { isMobile, LazyComponent: LazyFilterDropdown } =
-  //     useMobileImport<FilterProps>(() => import("components/filters/mobile"));
 
   return (
     <main className="full-width-section bg-base-100 lg:pb-24 pb-12">
@@ -162,13 +91,6 @@ const Restaurants = () => {
             избраните от Вас филтри!
           </p>
         )}
-        {/* 
-        <PaginationComponent
-          pages={pages}
-          currentPage={currentPage}
-          changePage={(newPage) => changePage(newPage)}
-        /> */}
-        {/* </div> */}
       </div>
     </main>
   );
