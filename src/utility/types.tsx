@@ -5,9 +5,10 @@ export type RestaurantCardType = {
   location: {
     name: string | null;
   } | null;
-  type_food: {
-    name: string | null;
-  } | null;
+  types_of_food: string[] | null;
+  food_names?: string[];
+  like: number;
+  dislike: number;
 };
 
 export type User = {
@@ -22,4 +23,14 @@ export type AlertStatusType = {
     label: string;
     onClick: () => void;
   };
+};
+
+export type Location = {
+  id: number;
+  name: string;
+};
+
+export type FoodType = {
+  id: number;
+  name: string;
 };

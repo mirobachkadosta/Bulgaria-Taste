@@ -2,11 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import type { RestaurantCardType } from "@/utility/types";
-// import { BusinessCard as BusinessCardType } from "app/api/user-profile/favourite/get/route";
-import { CookingPot, MapPin, Star } from "lucide-react";
-// import { usePathname, useRouter } from "next/navigation";
-// import { personalProfileFavourites } from "utility/links";
-// import { BusinessServiceFallbackIcon } from "utility/icons";
+import { CookingPot, MapPin, ThumbsDown, ThumbsUp } from "lucide-react";
 import restaurantsFallbackIcon from "../../../utility/icons.tsx";
 import { useNavigate } from "react-router";
 
@@ -19,7 +15,15 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
   const redirectToRestaurantPage = () => {
     navigate(`/restaurant/${restaurant.id}/${restaurant.name}`);
   };
-
+  const typeFood3 = (foodTypes: string[]) => {
+    if (foodTypes && foodTypes.length > 2) {
+      return foodTypes.slice(0, 2).join(", ") + ", ...";
+    } else if (foodTypes) {
+      return foodTypes?.join(", ");
+    } else {
+      return "";
+    }
+  };
   return (
     <div
       key={restaurant.id}
@@ -49,30 +53,12 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
             {restaurantsFallbackIcon()}
           </div>
         </div>
-        {/* {pathName === personalProfileFavourites && handleRemove ? (
-          <Button
-            variant="ghost"
-            onClick={() =>
-              openConfirm(
-                "Сигурни ли сте, че искате да премахнете профила?",
-                `След като премахнете профилът от секцията любими, той няма да се визуализира повече тук, докато не го маркирате отново като любим.`,
-                () => handleRemove(business.id),
-                "",
-                "Премахни"
-              )
-            }
-            aria-label="Премахване"
-            className="bg-base-100 hover:bg-base-100/80 absolute top-1 right-1 size-8 !rounded-full"
-          >
-            <X className="stroke-error-content size-6" />
-          </Button>
-        ) : null} */}
       </div>
 
       <div className="flex-1 p-4">
         <div className="flex flex-col-reverse md:flex md:flex-row md:justify-between md:items-center gap-1 mb-1">
-          {restaurant.type_food?.name && (
-            <p className="text-sm!">{restaurant.type_food.name}</p>
+          {restaurant.food_names && (
+            <p className="text-sm!">{typeFood3(restaurant.food_names)}</p>
           )}
           {restaurant.location?.name && (
             <div className="text-secondary flex gap-1 items-center">
@@ -87,16 +73,21 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
         >
           {restaurant.name}
         </span>
-        {/* <p className="mt-1">
-          {restaurant.activeServicesCount ?? 0}{" "}
-          {`предлаган${restaurant.activeServicesCount === 1 ? "а" : "и"} услуг${
-            restaurant.activeServicesCount === 1 ? "а" : "и"
-          }`}
-        </p> */}
-        <div className="flex items-start gap-1 mt-1">
-          <Star size={16} className="fill-primary mt-0.5" />
-          {/* <p className="text-primary! font-bold">{restaurant.avgRating}</p>
-          <p>({restaurant.totalFeedbacksCount} отзива)</p> */}
+        <div className="flex flex-col items-start gap-1 mt-1">
+          <div className="flex gap-2">
+            <ThumbsUp
+              size={16}
+              className="fill-primary stroke-primary mt-0.5"
+            />
+            <p>({restaurant.like} препоръчват)</p>
+          </div>
+          <div className="flex gap-2">
+            <ThumbsDown
+              size={16}
+              className="fill-primary stroke-primary mt-0.5"
+            />
+            <p>({restaurant.dislike} не препоръчват)</p>
+          </div>
         </div>
       </div>
 
@@ -105,15 +96,6 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
           Виж профил
         </Button>
       </div>
-      {/* <DialogComponent
-        open={modal.open}
-        header={modal.header}
-        description={modal.description}
-        onOpenChange={modal.onOpenChange}
-        onConfirm={modal.onConfirm}
-        cancelContent={modal.cancelContent}
-        mainActionContent={modal.mainActionContent}
-      /> */}
     </div>
   );
 };
