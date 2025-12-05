@@ -23,7 +23,7 @@ export default function MobileDrawerNav() {
   const user = globalStore().user;
 
   return (
-    <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen} direction="right">
+    <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen} direction="bottom">
       <div className="flex gap-4">
         {user ? <DropdownMenuPopUp /> : null}
         <DrawerTrigger
@@ -66,7 +66,7 @@ export default function MobileDrawerNav() {
             )
           )}
         </nav>
-        <div className="grid grid-cols-1 gap-6 py-3 px-4 border-t border-base-200">
+        <div className="grid grid-cols-1 max-w-[300px] gap-6 py-3 px-4 border-t mx-auto border-base-200">
           <ThemeToggle />
           {user ? (
             <Button

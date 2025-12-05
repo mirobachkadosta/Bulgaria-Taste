@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import { Button } from "../ui/button";
 import { globalStore } from "@/store/globalStore";
 import { useNavigate } from "react-router";
-import { LogIn } from "lucide-react";
 import ThemeToggleButton from "../theme-toggle/ThemeToggle";
 import UserMenuDropdown from "../user-menu-dropdown/UserMenuDropdown";
 import { NAV_DEFAULT_ELEMENTS } from "@/utility/constants";
@@ -49,17 +48,7 @@ export default function Header() {
           </div>
         )}
         <div className="lg:hidden flex gap-4">
-          {user ? (
-            <Button
-              onClick={() => navigate("/login")}
-              variant="default"
-              size="default"
-              aria-label="Вход в акаунта"
-              className="justify-start"
-            >
-              <LogIn />
-            </Button>
-          ) : null}
+          {user?.email ? <MobileDrawerNav /> : null}
         </div>
         <div className="hidden lg:flex lg:gap-4 lg:items-center">
           <ThemeToggleButton />

@@ -1,12 +1,13 @@
 export type RestaurantCardType = {
   id: number;
-  name: string | null;
+  name: string;
   logo: string | null;
   location: {
-    name: string | null;
+    name: string;
   } | null;
   types_of_food: string[] | null;
   food_names?: string[];
+  creator_email: string | null;
   like: number;
   dislike: number;
 };

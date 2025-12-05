@@ -6,6 +6,7 @@ import type { Location, FoodType } from "@/utility/types";
 import { HeaderSection } from "../HeaderSection/HeaderSepartor";
 import { globalStore } from "@/store/globalStore";
 import { Button } from "../ui/button";
+import { Select, SelectItem, SelectContent, SelectTrigger } from "../ui/select";
 
 const AddRestaurant: React.FC = () => {
   const [name, setName] = useState("");
@@ -13,8 +14,11 @@ const AddRestaurant: React.FC = () => {
   const [foodTypeIds, setFoodTypeIds] = useState<string[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [foodTypes, setFoodTypes] = useState<FoodType[]>([]);
-  const { isLoading, setIsLoading } = globalStore();
-  const { setAlertStatus } = globalStore();
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [imagesFiles, setImagesFiles] = useState<File[]>([]);
+
+  const store = globalStore();
+  const { isLoading, setIsLoading, setAlertStatus, user } = store;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,31 +28,115 @@ const AddRestaurant: React.FC = () => {
           .from("locations")
           .select();
         if (locationsError) throw locationsError;
-        setLocations(locationsData || []);
+        setLocations((locationsData as Location[]) || []);
 
         const { data: foodTypesData, error: foodTypesError } = await supabase
           .from("type_food")
           .select();
         if (foodTypesError) throw foodTypesError;
-        setFoodTypes(foodTypesData || []);
+        setFoodTypes((foodTypesData as FoodType[]) || []);
       } catch (err: any) {
+        console.error("Error fetching data:", err);
         setAlertStatus({
           status: "error",
           statusHeader: "Грешка",
           statusContent:
-            "Грешка при зареждане на данни за типове храна и локация:" +
-            err.message,
+            "Грешка при зареждане на данни за типове храна и локация: " +
+            (err?.message || String(err)),
         });
       } finally {
         setIsLoading(false);
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Validate file type and size
+  const validateImage = (file: File) => {
+    const validTypes = ["image/jpeg", "image/png"];
+    if (!validTypes.includes(file.type)) {
+      return "Невалиден формат. Само JPEG/PNG.";
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      return "Файлът е твърде голям (макс 4MB).";
+    }
+    return "";
+  };
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (file) {
+      const error = validateImage(file);
+      if (error) {
+        setAlertStatus({
+          status: "error",
+          statusHeader: "Проблем при качване на лого",
+          statusContent: error,
+        });
+        setLogoFile(null);
+      } else {
+        setLogoFile(file);
+      }
+    }
+  };
+
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 3) {
+      setAlertStatus({
+        status: "error",
+        statusHeader: "Грешка",
+        statusContent: "Можете да качите максимум 3 снимки.",
+      });
+      return;
+    }
+    for (const file of files) {
+      const error = validateImage(file);
+      if (error) {
+        setAlertStatus({
+          status: "error",
+          statusHeader: "Грешка",
+          statusContent: error,
+        });
+        return;
+      }
+    }
+    setImagesFiles(files);
+  };
+
+  const uploadToSupabase = async (file: File, path: string) => {
+    const { error } = await supabase.storage
+      .from("restaurants")
+      .upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+    if (error) {
+      setAlertStatus({
+        status: "error",
+        statusHeader: "Грешка",
+        statusContent: "Грешка при качване на файл: " + error.message,
+      });
+      return "";
+    }
+
+    const { data: urlData } = await supabase.storage
+      .from("restaurants")
+      .getPublicUrl(path);
+
+    // depending on supabase version the value might be urlData.publicUrl
+    return (urlData as any)?.publicUrl || "";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !locationId || foodTypeIds.length === 0) {
+    if (
+      !name ||
+      !locationId ||
+      locationId === "default" ||
+      foodTypeIds.length === 0
+    ) {
       setAlertStatus({
         status: "error",
         statusHeader: "Грешка",
@@ -56,30 +144,112 @@ const AddRestaurant: React.FC = () => {
       });
       return;
     }
-    setIsLoading(true);
-    try {
-      const { error: insertError } = await supabase.from("restaurants").insert([
-        {
-          name,
-          location_id: Number(locationId),
-          types_of_food: foodTypeIds.map(Number),
-          creator_email: globalStore().user?.email,
-        },
-      ]);
-      if (insertError) throw insertError;
-      setAlertStatus({
-        status: "success",
-        statusHeader: "Успех",
-        statusContent: "Ресторантът беше добавен успешно!",
-      });
-      setName("");
-      setLocationId("");
-      setFoodTypeIds([]);
-    } catch (err: any) {
+    if (imagesFiles.length > 3) {
       setAlertStatus({
         status: "error",
         statusHeader: "Грешка",
-        statusContent: "Неуспешно добавяне на ресторант: " + err.message,
+        statusContent: "Максимум 3 снимки.",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      try {
+        // 1. Upload logo and images first
+        let logoUrl = "";
+        if (logoFile) {
+          const ext = logoFile.name.split(".").pop();
+          const logoPath = `/storage/v1/object/public/restaurants/logos/${logoFile.name
+            .replace(/\s+/g, "_")
+            .replace(/[^a-zA-Z0-9_.-]/g, "")}-${Date.now()}.${ext}`;
+          logoUrl = await uploadToSupabase(logoFile, logoPath);
+          if (!logoUrl) {
+            setAlertStatus({
+              status: "error",
+              statusHeader: "Грешка",
+              statusContent: "Грешка при качване на логото.",
+            });
+            return;
+          }
+        }
+
+        let imagesUrls: string[] = [];
+        for (let i = 0; i < imagesFiles.length; i++) {
+          const img = imagesFiles[i];
+          const ext = img.name.split(".").pop();
+          const imgPath = `/storage/v1/object/public/restaurants/images/${img.name
+            .replace(/\s+/g, "_")
+            .replace(/[^a-zA-Z0-9_.-]/g, "")}-${Date.now()}.${ext}`;
+          const url = await uploadToSupabase(img, imgPath);
+          if (!url) {
+            setAlertStatus({
+              status: "error",
+              statusHeader: "Грешка",
+              statusContent: `Грешка при качване на снимка ${img.name}`,
+            });
+            return;
+          }
+          imagesUrls.push(url);
+        }
+
+        // 2. Create restaurant with logo and images
+        const { error: insertError } = await supabase
+          .from("restaurants")
+          .insert([
+            {
+              name,
+              location_id: Number(locationId),
+              types_of_food: foodTypeIds.map(Number),
+              creator_email: user?.email,
+              logo: logoUrl,
+              images: imagesUrls,
+            },
+          ])
+          .select();
+        if (insertError) {
+          setAlertStatus({
+            status: "error",
+            statusHeader: "Грешка",
+            statusContent:
+              "Неуспешно добавяне на ресторант: " + insertError.message,
+          });
+          return;
+        }
+
+        setAlertStatus({
+          status: "success",
+          statusHeader: "Успех",
+          statusContent: "Ресторантът беше добавен успешно!",
+        });
+        setName("");
+        setLocationId("");
+        setFoodTypeIds([]);
+        setLogoFile(null);
+        setImagesFiles([]);
+      } catch (err: any) {
+        console.log(err);
+        setAlertStatus({
+          status: "error",
+          statusHeader: "Грешка",
+          statusContent: "Неуспешно добавяне на ресторант: " + err.message,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+      setName("");
+      setLocationId("");
+      setFoodTypeIds([]);
+      setLogoFile(null);
+      setImagesFiles([]);
+    } catch (err: any) {
+      console.error(err);
+      setAlertStatus({
+        status: "error",
+        statusHeader: "Грешка",
+        statusContent:
+          "Неуспешно добавяне на ресторант: " + (err?.message || String(err)),
       });
     } finally {
       setIsLoading(false);
@@ -88,55 +258,57 @@ const AddRestaurant: React.FC = () => {
 
   return (
     <main className="full-width-section bg-base-200 pb-12">
-      <div className="content-container mx-auto mt-10 p-6">
-        <HeaderSection header="Добавете вашият ресторант" />
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="container mx-auto p-4">
+        <HeaderSection header="Добави ресторант" />
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-primary text-base">Име на ресторанта</label>
             <Input
+              className="border-primary placeholder:text-secondary/50 text=primary"
+              placeholder="Въведете име на ресторанта..."
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Въведете име на ресторанта"
-              className="text-secondary placeholder:text-secondary/50"
-              required
             />
           </div>
+
           <div>
-            <label className="text-primary text-base">Местоположение</label>
-            <select
-              className="flex h-9 w-full text-secondary rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-              value={locationId}
-              onChange={(e) => setLocationId(e.target.value)}
-              required
-            >
-              <option className="text-secondary/50" value="" disabled>
-                Изберете местоположение
-              </option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={String(loc.id)}>
-                  {loc.name}
-                </option>
-              ))}
-            </select>
+            <label className="text-primary text-base">Локация</label>
+            <Select value={locationId} onValueChange={setLocationId}>
+              <SelectTrigger className="w-full p-2 border rounded border-primary text-secondary/50 text-left cursor-pointer">
+                {locationId
+                  ? locations.find((loc) => String(loc.id) === locationId)?.name
+                  : "Избери"}
+              </SelectTrigger>
+              <SelectContent className="bg-base-100">
+                <SelectItem
+                  value="default"
+                  className="text-secondary/50 text-base hover:bg-base-300! cursor-pointer"
+                >
+                  Избери
+                </SelectItem>
+                {locations.map((loc) => (
+                  <SelectItem
+                    key={loc.id}
+                    value={String(loc.id)}
+                    className="text-secondary text-base hover:bg-base-300! cursor-pointer"
+                  >
+                    {loc.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
           <div>
-            <label className="text-primary text-base">Тип храна</label>
-            <div
-              className="grid gap-2
-                grid-cols-2
-                max-h-[600px]
-                overflow-y-auto
-                sm:grid-cols-2 sm:max-h-[600px]
-                lg:grid-cols-5 lg:max-h-[200px]"
-              style={{ gridAutoRows: "minmax(32px,auto)" }}
-            >
+            <label className="text-primary text-base">Типове храна</label>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 max-h-[600px] overflow-y-auto">
               {foodTypes.map((type) => (
                 <label
                   key={type.id}
                   className="flex items-center gap-2 cursor-pointer select-none text-primary"
                 >
                   <Checkbox
-                    className="text-secondary"
+                    className="cursor-pointer text-primary-content bg-primary"
                     checked={foodTypeIds.includes(String(type.id))}
                     onCheckedChange={(checked) => {
                       const id = String(type.id);
@@ -151,6 +323,31 @@ const AddRestaurant: React.FC = () => {
                 </label>
               ))}
             </div>
+          </div>
+
+          <div className="lg:flex lg:flex-row flex flex-col gap-3">
+            <label className="text-primary text-base">
+              Добави лого (JPEG/PNG, макс 4MB)
+            </label>
+            <input
+              type="file"
+              className="underline underline-offset-4 font-bold cursor-pointer"
+              accept="image/jpeg,image/png"
+              onChange={handleLogoChange}
+            />
+          </div>
+
+          <div className="lg:flex lg:flex-row flex flex-col gap-3">
+            <label className="text-primary text-base">
+              Добави снимки (до 3, JPEG/PNG, макс 4MB всяка)
+            </label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png"
+              multiple
+              className="underline underline-offset-4 font-bold cursor-pointer"
+              onChange={handleImagesChange}
+            />
           </div>
           <Button
             type="submit"

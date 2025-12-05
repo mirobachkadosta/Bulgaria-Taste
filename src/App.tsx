@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import supabase from "./supabase";
 import RedirectAuth from "./components/redirect-auth-users/RedirectAuth";
 import AddRestaurant from "./components/add-restaurant/AddRestaurant";
+import RestaurantDetails from "./components/restaurants/restaurant-details/RestaurantDetails";
 function App() {
   const setUser = globalStore((state) => state.setUser);
 
@@ -73,6 +74,12 @@ function App() {
           }
         />
         <Route path="/add-restaurant" element={<AddRestaurant />} />
+        <Route
+          path="/restaurant/:id/:name"
+          element={
+            <RestaurantDetails currentUser={globalStore.getState().user!} />
+          }
+        />
       </Routes>
       <Alert />
       <Footer />
