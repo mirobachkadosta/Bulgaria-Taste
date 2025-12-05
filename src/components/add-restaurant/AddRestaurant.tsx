@@ -106,12 +106,9 @@ const AddRestaurant: React.FC = () => {
   };
 
   const uploadToSupabase = async (file: File, path: string) => {
-    const { error } = await supabase.storage
-      .from("restaurants")
-      .upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+    const { error } = await supabase.storage.from("images").upload(path, file, {
+      upsert: false,
+    });
     if (error) {
       setAlertStatus({
         status: "error",
@@ -122,7 +119,7 @@ const AddRestaurant: React.FC = () => {
     }
 
     const { data: urlData } = await supabase.storage
-      .from("restaurants")
+      .from("images")
       .getPublicUrl(path);
 
     // depending on supabase version the value might be urlData.publicUrl
@@ -161,9 +158,8 @@ const AddRestaurant: React.FC = () => {
         let logoUrl = "";
         if (logoFile) {
           const ext = logoFile.name.split(".").pop();
-          const logoPath = `/storage/v1/object/public/restaurants/logos/${logoFile.name
-            .replace(/\s+/g, "_")
-            .replace(/[^a-zA-Z0-9_.-]/g, "")}-${Date.now()}.${ext}`;
+          const logoPath = `images/logos/
+          ${logoFile.name}+${ext}`;
           logoUrl = await uploadToSupabase(logoFile, logoPath);
           if (!logoUrl) {
             setAlertStatus({
@@ -175,11 +171,11 @@ const AddRestaurant: React.FC = () => {
           }
         }
 
-        let imagesUrls: string[] = [];
+        const imagesUrls: string[] = [];
         for (let i = 0; i < imagesFiles.length; i++) {
           const img = imagesFiles[i];
           const ext = img.name.split(".").pop();
-          const imgPath = `/storage/v1/object/public/restaurants/images/${img.name
+          const imgPath = `images/${img.name
             .replace(/\s+/g, "_")
             .replace(/[^a-zA-Z0-9_.-]/g, "")}-${Date.now()}.${ext}`;
           const url = await uploadToSupabase(img, imgPath);
@@ -228,12 +224,12 @@ const AddRestaurant: React.FC = () => {
         setFoodTypeIds([]);
         setLogoFile(null);
         setImagesFiles([]);
-      } catch (err: any) {
+      } catch (err) {
         console.log(err);
         setAlertStatus({
           status: "error",
           statusHeader: "Грешка",
-          statusContent: "Неуспешно добавяне на ресторант: " + err.message,
+          statusContent: "Неуспешно добавяне на ресторант: " + err,
         });
       } finally {
         setIsLoading(false);
@@ -243,13 +239,12 @@ const AddRestaurant: React.FC = () => {
       setFoodTypeIds([]);
       setLogoFile(null);
       setImagesFiles([]);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setAlertStatus({
         status: "error",
         statusHeader: "Грешка",
-        statusContent:
-          "Неуспешно добавяне на ресторант: " + (err?.message || String(err)),
+        statusContent: "Неуспешно добавяне на ресторант: " + err,
       });
     } finally {
       setIsLoading(false);

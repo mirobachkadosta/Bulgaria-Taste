@@ -1,6 +1,6 @@
-import Header from "./components/header/Header";
+import Header from "./components/Header/header";
 import { Route, Routes } from "react-router";
-import Home from "./components/home/Home";
+import Home from "./components/Home/home";
 import "./global.css";
 import Footer from "./components/footer/Footer";
 import Alert from "./components/alert/Alert";
@@ -21,7 +21,7 @@ import RedirectAuth from "./components/redirect-auth-users/RedirectAuth";
 import AddRestaurant from "./components/add-restaurant/AddRestaurant";
 import RestaurantDetails from "./components/restaurants/restaurant-details/RestaurantDetails";
 function App() {
-  const setUser = globalStore((state) => state.setUser);
+  const { setUser } = globalStore();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -74,12 +74,7 @@ function App() {
           }
         />
         <Route path="/add-restaurant" element={<AddRestaurant />} />
-        <Route
-          path="/restaurant/:id/:name"
-          element={
-            <RestaurantDetails currentUser={globalStore.getState().user!} />
-          }
-        />
+        <Route path="/restaurant/:id/:name" element={<RestaurantDetails />} />
       </Routes>
       <Alert />
       <Footer />
