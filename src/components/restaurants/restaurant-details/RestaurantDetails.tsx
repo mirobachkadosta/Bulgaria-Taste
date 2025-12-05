@@ -1,9 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { RestaurantCardType, User } from "../../../utility/types";
+import type {
+  FoodType,
+  RestaurantCardType,
+  User,
+} from "../../../utility/types";
 import { supabase } from "../../../supabase/supabase";
 import { globalStore } from "@/store/globalStore";
 import { Button } from "@/components/ui/button";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 export default function RestaurantDetails() {
   const { id } = useParams();
@@ -33,7 +38,8 @@ export default function RestaurantDetails() {
           if (!foodError && foodData) {
             const names = data.types_of_food
               .map(
-                (id: string) => foodData.find((ft: any) => ft.id == id)?.name
+                (id: string) =>
+                  foodData.find((ft: FoodType) => ft.id == Number(id))?.name
               )
               .filter(Boolean);
             setFoodNames(names);
@@ -87,7 +93,7 @@ export default function RestaurantDetails() {
   console.log(restaurant?.logo);
 
   return (
-    <main className="full-width-section bg-base-200">
+    <main className="full-width-section bg-base-200 py-12">
       <div className="p-6 max-w-2xl mx-auto rounded-xl bg-base-100 shadow-md flex flex-col items-center">
         {restaurant?.logo && (
           <img
@@ -101,25 +107,29 @@ export default function RestaurantDetails() {
         <p className="mb-2">
           Types of food: {foodNames.length ? foodNames.join(", ") : "-"}
         </p>
-        <div className="flex gap-4 mb-4">
-          <span>Likes: {restaurant?.like}</span>
-          <span>Dislikes: {restaurant?.dislike}</span>
+        <div className="flex gap-4 mb-4 text-primary">
+          <span className="flex gap-2 items-center">
+            <ThumbsUp size={16} /> Likes: {restaurant?.like}
+          </span>
+          <span className="flex gap-2 items-center">
+            <ThumbsDown size={16} /> Dislikes: {restaurant?.dislike}
+          </span>
         </div>
-        {currentUser.email !== restaurant?.creator_email ? (
+        {currentUser?.email !== restaurant?.creator_email ? (
           <div className="flex gap-4 mt-4">
             <Button
               disabled={actionMade}
               onClick={() => handleLike()}
-              className="px-4 py-2 bg-green-500 text-white rounded flex items-center gap-2"
+              className="px-4 py-2 bg-primary text-primary-content rounded flex items-center gap-2"
             >
-              👍 <span>Харесвам</span>
+              <ThumbsUp size={16} /> <span>Харесвам</span>
             </Button>
             <Button
               disabled={actionMade}
               onClick={() => handleDislike()}
-              className="px-4 py-2 bg-red-500 text-white rounded flex items-center gap-2"
+              className="px-4 py-2 bg-primary text-primary-content rounded flex items-center gap-2"
             >
-              👎 <span>Не харесвам</span>
+              <ThumbsDown size={16} /> <span>Не харесвам</span>
             </Button>
           </div>
         ) : null}
