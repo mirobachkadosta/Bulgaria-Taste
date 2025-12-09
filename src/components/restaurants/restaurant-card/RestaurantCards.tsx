@@ -1,16 +1,19 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import type { RestaurantCardType } from "@/utility/types";
-import { CookingPot, MapPin, ThumbsDown, ThumbsUp } from "lucide-react";
+import { CookingPot, MapPin, ThumbsDown, ThumbsUp, X } from "lucide-react";
 import restaurantsFallbackIcon from "../../../utility/icons.tsx";
 import { useNavigate } from "react-router";
-
 type RestourantCardProps = {
   restaurant: RestaurantCardType;
+  showDelete?: boolean;
+  onDelete?: (id: number) => void;
 };
 
-const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
+const RestaurantCard = ({
+  restaurant,
+  showDelete = false,
+  onDelete,
+}: RestourantCardProps) => {
   const navigate = useNavigate();
   const redirectToRestaurantPage = () => {
     navigate(`/restaurant/${restaurant.id}/${restaurant.name}`);
@@ -27,8 +30,17 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
   return (
     <div
       key={restaurant.id}
-      className="border border-neutral rounded-lg w-full h-full flex flex-col shadow-custom"
+      className="border border-neutral rounded-lg w-full h-full flex flex-col shadow-custom relative"
     >
+      {showDelete && onDelete && (
+        <button
+          onClick={() => onDelete(restaurant.id)}
+          className="absolute top-2 cursor-pointer right-2 z-20 bg-error hover:bg-error/80 text-white rounded-full p-1.5 transition-colors shadow-lg"
+          aria-label="Изтрий ресторант"
+        >
+          <X size={18} />
+        </button>
+      )}
       <div className="relative w-full h-[100px] border-b border-neutral">
         <div
           onClick={redirectToRestaurantPage}
@@ -39,8 +51,7 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
               src={restaurant.logo || ""}
               alt={`Лого на ресторант ${restaurant.name ?? ""}`}
               loading="lazy"
-              sizes="85px"
-              className="rounded-full object-cover border absolute border-base-300 shadow-business"
+              className="w-full h-full rounded-full object-cover border border-base-300 shadow-business"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center border-b rounded-full border-neutral bg-base-200 shadow-business">
@@ -48,7 +59,7 @@ const RestaurantCard = ({ restaurant }: RestourantCardProps) => {
             </div>
           )}
         </div>
-        <div onClick={redirectToRestaurantPage}>
+        <div className="cursor-pointer" onClick={redirectToRestaurantPage}>
           <div className="size-full bg-secondary">
             {restaurantsFallbackIcon()}
           </div>

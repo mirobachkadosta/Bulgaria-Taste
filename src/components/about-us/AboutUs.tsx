@@ -1,52 +1,10 @@
-"use client";
-
 import { Link, redirect } from "react-router";
 import { HeaderSection } from "../HeaderSection/HeaderSepartor";
 import { IconBg } from "../../components/icon-bg/IconBg";
-import { Eye, LaptopMinimalCheck, Building2, Mail } from "lucide-react";
-// import { globalStore } from "@/store/global";
-// import { userStore } from "@/store/user";
 import { contactUsLink, registerLink } from "../../utility/links";
-
-// Локални данни за тази страница (можеш да ги изнесеш навън по-късно)
-const CORE_VALUES = [
-  {
-    icon: <Eye />,
-    header: "Прозрачност",
-    description:
-      "Вярваме, че добрата информация прави добрия избор. Всяко заведение получава ясен профил с меню, снимки, ревюта и оценка.",
-  },
-  {
-    icon: <LaptopMinimalCheck />,
-    header: "Достъпност",
-    description:
-      "Работим за това всеки ресторант в България да може да достигне гостите си онлайн — от големия град до най-малкото село.",
-  },
-  {
-    icon: <Building2 />,
-    header: "Растеж",
-    description:
-      "Помагаме на заведенията да увеличат видимостта си чрез умни промоции, селекции и лесни инструменти за управление.",
-  },
-];
-
-const TEAM = [
-  {
-    name: "Мирослав Димитров",
-    title: "Основател и единствен член на екипа",
-    image: "/images/team/miroslav.jpg",
-    description:
-      "Създател на Bulgaria Taste. Обича да намира добри места за хранене и да помага на малките и средни ресторанти да имат професионално онлайн присъствие.",
-    socials: [
-      { icon: <Mail />, label: "Gmail", link: "mailto:mdimitrov963@gmail.com" },
-    ],
-  },
-];
+import { CORE_VALUES, TEAM } from "../../utility/staticValues";
 
 export default function AboutUsContent() {
-  //   const userState = userStore();
-  //   const globalState = globalStore();
-
   return (
     <main className="full-width-section bg-base-100">
       <HeaderSection
@@ -190,7 +148,7 @@ export default function AboutUsContent() {
         </div>
       </section>
 
-      <section id="viziq" className="mt-12 lg:mb-20 mb-12 content-container">
+      <section id="viziq" className="flg:pb-20! pb-12! content-container">
         <h2 className="text-center mb-4">Нашата визия</h2>
         <article className="text-secondary">
           <p>

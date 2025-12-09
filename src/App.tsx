@@ -1,6 +1,6 @@
-import Header from "./components/Header/header";
+import Header from "./components/header/Header";
 import { Route, Routes } from "react-router";
-import Home from "./components/Home/home";
+import Home from "./components/home/Home";
 import "./global.css";
 import Footer from "./components/footer/Footer";
 import Alert from "./components/alert/Alert";
@@ -20,6 +20,9 @@ import supabase from "./supabase";
 import RedirectAuth from "./components/redirect-auth-users/RedirectAuth";
 import AddRestaurant from "./components/add-restaurant/AddRestaurant";
 import RestaurantDetails from "./components/restaurants/restaurant-details/RestaurantDetails";
+import UserProfile from "./components/user-profile/UserProfile";
+import ContactUsContent from "./components/contact-us/ContactUs";
+import NotFound from "./components/not-found/NotFound";
 function App() {
   const { setUser } = globalStore();
 
@@ -63,7 +66,8 @@ function App() {
             </RedirectAuth>
           }
         />
-        <Route path={contactUsLink} element={<div>Contact Page</div>} />
+
+        <Route path={contactUsLink} element={<ContactUsContent />} />
         <Route path={restaurantsLink} element={<Restaurants />} />
         <Route
           path={registerLink}
@@ -73,8 +77,10 @@ function App() {
             </RedirectAuth>
           }
         />
+        <Route path="/profile/:id" element={<UserProfile />} />
         <Route path="/add-restaurant" element={<AddRestaurant />} />
         <Route path="/restaurant/:id/:name" element={<RestaurantDetails />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Alert />
       <Footer />

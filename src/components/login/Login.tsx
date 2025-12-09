@@ -62,7 +62,9 @@ export default function Login() {
     }
     if (data.user) {
       setUser({
+        id: data.user.id,
         email: data.user.email || "",
+        logo: null,
       });
       setAlertStatus({
         status: "success",

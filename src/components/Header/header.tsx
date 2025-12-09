@@ -18,7 +18,7 @@ export default function Header() {
             to="/"
             aria-label="Върни се към началната страница"
             role="button"
-            className="cursor-pointer text-primary! font-bold"
+            className="no-underline! cursor-pointer text-primary! font-bold"
           >
             Bulgaria Taste
           </Link>

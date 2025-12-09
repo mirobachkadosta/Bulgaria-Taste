@@ -1,5 +1,3 @@
-"use client";
-
 import ThemeToggle from "../theme-toggle/ThemeToggle";
 import { XIcon, Menu, Plus } from "lucide-react";
 import { useState } from "react";
@@ -20,7 +18,7 @@ import { NAV_DEFAULT_ELEMENTS } from "@/utility/constants";
 export default function MobileDrawerNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const user = globalStore().user;
+  const { user } = globalStore();
 
   return (
     <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen} direction="bottom">
@@ -54,16 +52,21 @@ export default function MobileDrawerNav() {
         </DrawerHeader>
         <nav className="grid grid-cols-1 px-4 pb-3 gap-3 text-sm text-primary">
           {NAV_DEFAULT_ELEMENTS.map(
-            (element: { title: string; url: string }, indx: number) => (
-              <Link
-                className="flex! items-center h-[41px]"
-                key={indx}
-                to={element.url}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {element.title}
-              </Link>
-            )
+            (element: { title: string; url: string }, indx: number) => {
+              if (user && element.title === "Регистрация") {
+                return null;
+              }
+              return (
+                <Link
+                  className="flex! items-center h-[41px]"
+                  key={indx}
+                  to={element.url}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {element.title}
+                </Link>
+              );
+            }
           )}
         </nav>
         <div className="grid grid-cols-1 max-w-[300px] gap-6 py-3 px-4 border-t mx-auto border-base-200">

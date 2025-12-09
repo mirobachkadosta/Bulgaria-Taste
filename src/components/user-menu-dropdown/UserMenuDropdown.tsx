@@ -11,14 +11,7 @@ import { Link } from "react-router";
 import { User, LogOut } from "lucide-react";
 import { globalStore } from "@/store/globalStore";
 import { useNavigate } from "react-router";
-
-const USER_INTERNAL_MENUS = [
-  {
-    header: "Профил",
-    icon: <User />,
-    link: "/profile",
-  },
-];
+import { IconBg } from "../icon-bg/IconBg";
 
 export default function UserMenuDropdown() {
   const { logout, user } = globalStore();
@@ -35,24 +28,30 @@ export default function UserMenuDropdown() {
     const masked = user && user.email && "*".repeat(user.email.length - 3);
     return `${visible}${masked}`;
   };
+  const USER_INTERNAL_MENUS = [
+    {
+      header: "Профил",
+      icon: <User />,
+      link: `/profile/${user.id}`,
+    },
+  ];
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label="Отворете потребителското меню"
-          className="w-auto lg:max-w-[unset] lg:max-h-[unset] max-w-10 max-h-10 min-h-10 border-neutral border hover:bg-base-200/90 text-primary inline-flex items-center px-4 py-2 cursor-pointer justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:border aria-invalid:border-destructive"
+          className="w-auto lg:max-h-[unset] max-w-10 max-h-10 min-h-10 border-neutral border hover:bg-base-200/90 text-primary inline-flex items-center px-4 py-2 cursor-pointer justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:border aria-invalid:border-destructive"
         >
-          {/* <Avatar>
-            <AvatarImage
-              src={user.image || undefined}
+          {user && user.logo ? (
+            <img
+              src={user.logo || undefined}
               className="size-6"
               alt="Потребителска снимка на профила"
             />
-            <AvatarFallback>
-              <User className="size-6 p-0.5" />
-            </AvatarFallback>
-          </Avatar> */}
+          ) : (
+            <IconBg icon={<User className="size-6 p-0.5" />}></IconBg>
+          )}
           <span
             aria-label="Потребителски име или имейл"
             className="text-primary max-w-[100px] truncate overflow-hidden whitespace-nowrap text-sm hidden lg:block gap-2"
