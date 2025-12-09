@@ -80,7 +80,9 @@ Bulgaria Taste aims to connect food lovers with authentic Bulgarian restaurants 
 
 #### `/contact` - Contact Page
 
-**Goal**: Contact information (currently placeholder)
+**Goal**: Contact information for all the users if there is any questions, errors or missunderstanding.
+**Features**: 
+- UI with all the information that any user should need in every scenario. 
 
 ### Authentication Routes
 
