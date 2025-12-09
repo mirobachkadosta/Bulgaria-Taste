@@ -45,7 +45,6 @@ Bulgaria Taste aims to connect food lovers with authentic Bulgarian restaurants 
 - Platform introduction
 - "How It Works" section
 - "Why Us" section
-- Latest uploaded restaurants showcase
 
 #### `/restaurants` - Restaurants List
 
