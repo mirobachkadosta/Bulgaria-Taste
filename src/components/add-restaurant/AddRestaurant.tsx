@@ -7,6 +7,7 @@ import { HeaderSection } from "../HeaderSection/HeaderSepartor";
 import { globalStore } from "@/store/globalStore";
 import { Button } from "../ui/button";
 import { Select, SelectItem, SelectContent, SelectTrigger } from "../ui/select";
+import { validateImage, uploadToSupabase } from "@/utility/helpers";
 
 const AddRestaurant: React.FC = () => {
   const [name, setName] = useState("");
@@ -36,7 +37,6 @@ const AddRestaurant: React.FC = () => {
         if (foodTypesError) throw foodTypesError;
         setFoodTypes((foodTypesData as FoodType[]) || []);
       } catch (err: any) {
-        console.error("Error fetching data:", err);
         setAlertStatus({
           status: "error",
           statusHeader: "Грешка",
@@ -49,20 +49,7 @@ const AddRestaurant: React.FC = () => {
       }
     };
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Validate file type and size
-  const validateImage = (file: File) => {
-    const validTypes = ["image/jpeg", "image/png"];
-    if (!validTypes.includes(file.type)) {
-      return "Невалиден формат. Само JPEG/PNG.";
-    }
-    if (file.size > 4 * 1024 * 1024) {
-      return "Файлът е твърде голям (макс 4MB).";
-    }
-    return "";
-  };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -105,27 +92,6 @@ const AddRestaurant: React.FC = () => {
     setImagesFiles(files);
   };
 
-  const uploadToSupabase = async (file: File, path: string) => {
-    const { error } = await supabase.storage.from("images").upload(path, file, {
-      upsert: false,
-    });
-    if (error) {
-      setAlertStatus({
-        status: "error",
-        statusHeader: "Грешка",
-        statusContent: "Грешка при качване на файл: " + error.message,
-      });
-      return "";
-    }
-
-    const { data: urlData } = await supabase.storage
-      .from("images")
-      .getPublicUrl(path);
-
-    // depending on supabase version the value might be urlData.publicUrl
-    return (urlData as any)?.publicUrl || "";
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
@@ -154,18 +120,19 @@ const AddRestaurant: React.FC = () => {
     try {
       setIsLoading(true);
       try {
-        // 1. Upload logo and images first
         let logoUrl = "";
         if (logoFile) {
           const ext = logoFile.name.split(".").pop();
-          const logoPath = `images/logos/
-          ${logoFile.name}+${ext}`;
-          logoUrl = await uploadToSupabase(logoFile, logoPath);
-          if (!logoUrl) {
+          const logoPath = `logos/${logoFile.name
+            .replace(/\s+/g, "_")
+            .replace(/[^a-zA-Z0-9_.-]/g, "")}-${Date.now()}.${ext}`;
+          try {
+            logoUrl = await uploadToSupabase(logoFile, logoPath);
+          } catch (error: any) {
             setAlertStatus({
               status: "error",
               statusHeader: "Грешка",
-              statusContent: "Грешка при качване на логото.",
+              statusContent: "Грешка при качване на логото: " + error.message,
             });
             return;
           }
@@ -175,22 +142,23 @@ const AddRestaurant: React.FC = () => {
         for (let i = 0; i < imagesFiles.length; i++) {
           const img = imagesFiles[i];
           const ext = img.name.split(".").pop();
-          const imgPath = `images/${img.name
+          const imgPath = `${img.name
             .replace(/\s+/g, "_")
             .replace(/[^a-zA-Z0-9_.-]/g, "")}-${Date.now()}.${ext}`;
-          const url = await uploadToSupabase(img, imgPath);
-          if (!url) {
+          try {
+            const url = await uploadToSupabase(img, imgPath);
+            imagesUrls.push(url);
+          } catch (error: any) {
             setAlertStatus({
               status: "error",
               statusHeader: "Грешка",
-              statusContent: `Грешка при качване на снимка ${img.name}`,
+              statusContent:
+                `Грешка при качване на снимка ${img.name}: ` + error.message,
             });
             return;
           }
-          imagesUrls.push(url);
         }
 
-        // 2. Create restaurant with logo and images
         const { error: insertError } = await supabase
           .from("restaurants")
           .insert([
@@ -225,7 +193,6 @@ const AddRestaurant: React.FC = () => {
         setLogoFile(null);
         setImagesFiles([]);
       } catch (err) {
-        console.log(err);
         setAlertStatus({
           status: "error",
           statusHeader: "Грешка",
@@ -240,7 +207,6 @@ const AddRestaurant: React.FC = () => {
       setLogoFile(null);
       setImagesFiles([]);
     } catch (err) {
-      console.error(err);
       setAlertStatus({
         status: "error",
         statusHeader: "Грешка",
@@ -320,29 +286,67 @@ const AddRestaurant: React.FC = () => {
             </div>
           </div>
 
-          <div className="lg:flex lg:flex-row flex flex-col gap-3">
-            <label className="text-primary text-base">
-              Добави лого (JPEG/PNG, макс 4MB)
-            </label>
-            <input
-              type="file"
-              className="underline underline-offset-4 font-bold cursor-pointer"
-              accept="image/jpeg,image/png"
-              onChange={handleLogoChange}
-            />
+          <div>
+            <div className="flex gap-3 lg:flex-row flex-col items-center">
+              <Button
+                className="text-accent"
+                variant={"link"}
+                type="button"
+                onClick={() =>
+                  document
+                    .querySelector<HTMLInputElement>(
+                      '[data-testid="logo-file-input"]'
+                    )
+                    ?.click()
+                }
+              >
+                {logoFile ? logoFile.name : "Прикачи файл"}
+              </Button>
+              <span className="text-secondary/70 text-sm block mb-2">
+                (JPEG/PNG, макс 4MB)
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png"
+                hidden
+                data-testid="logo-file-input"
+                onChange={handleLogoChange}
+              />
+            </div>
           </div>
 
-          <div className="lg:flex lg:flex-row flex flex-col gap-3">
-            <label className="text-primary text-base">
-              Добави снимки (до 3, JPEG/PNG, макс 4MB всяка)
-            </label>
-            <input
-              type="file"
-              accept="image/jpeg,image/png"
-              multiple
-              className="underline underline-offset-4 font-bold cursor-pointer"
-              onChange={handleImagesChange}
-            />
+          <div>
+            <div className="flex gap-3 items-center lg:flex-row flex-col">
+              <Button
+                className="text-accent"
+                variant={"link"}
+                type="button"
+                onClick={() =>
+                  document
+                    .querySelector<HTMLInputElement>(
+                      '[data-testid="images-file-input"]'
+                    )
+                    ?.click()
+                }
+              >
+                {imagesFiles.length > 0
+                  ? `${imagesFiles.length} файл${
+                      imagesFiles.length > 1 ? "а" : ""
+                    }`
+                  : "Прикачи файл"}
+              </Button>
+              <span className="text-secondary/70 text-sm block mb-2">
+                (до 3 файла, JPEG/PNG, макс 4MB всеки)
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png"
+                multiple
+                hidden
+                data-testid="images-file-input"
+                onChange={handleImagesChange}
+              />
+            </div>
           </div>
           <Button
             type="submit"

@@ -2,9 +2,11 @@ export type RestaurantCardType = {
   id: number;
   name: string;
   logo: string | null;
+  images: string[] | null;
   location: {
     name: string;
   } | null;
+  location_id: string | null;
   types_of_food: string[] | null;
   food_names?: string[];
   creator_email: string | null;
@@ -13,7 +15,9 @@ export type RestaurantCardType = {
 };
 
 export type User = {
+  id: string;
   email: string;
+  logo: string | null;
 };
 
 export type AlertStatusType = {

@@ -9,12 +9,19 @@ import { supabase } from "../../../supabase/supabase";
 import { globalStore } from "@/store/globalStore";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel.tsx";
 
 export default function RestaurantDetails() {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState<RestaurantCardType | null>(null);
   const [foodNames, setFoodNames] = useState<string[]>([]);
-  const { setIsLoading, user } = globalStore();
+  const { setIsLoading, user, setAlertStatus } = globalStore();
   const currentUser = user as User;
   const [actionMade, setActionMade] = useState(false);
   useEffect(() => {
@@ -55,13 +62,17 @@ export default function RestaurantDetails() {
   const handleLike = async () => {
     if (!restaurant) return;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("restaurants")
       .upsert({ id: restaurant.id, like: restaurant.like + 1 })
       .select();
 
     if (error) {
-      console.error(error);
+      setAlertStatus({
+        status: "error",
+        statusHeader: "Грешка",
+        statusContent: "Грешка при харесване на ресторанта",
+      });
       return;
     }
 
@@ -75,13 +86,18 @@ export default function RestaurantDetails() {
   const handleDislike = async () => {
     if (!restaurant) return;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("restaurants")
       .upsert({ id: restaurant.id, dislike: restaurant.dislike + 1 })
       .select();
 
     if (error) {
-      console.error(error);
+      setAlertStatus({
+        status: "error",
+        statusHeader: "Грешка",
+        statusContent: "Грешка при нехаресване на ресторанта",
+      });
+
       return;
     }
     setActionMade(true);
@@ -90,7 +106,6 @@ export default function RestaurantDetails() {
       dislike: restaurant.dislike + 1,
     });
   };
-  console.log(restaurant?.logo);
 
   return (
     <main className="full-width-section bg-base-200 py-12">
@@ -107,6 +122,25 @@ export default function RestaurantDetails() {
         <p className="mb-2">
           Types of food: {foodNames.length ? foodNames.join(", ") : "-"}
         </p>
+        <div>
+          {restaurant?.images && restaurant.images.length > 0 && (
+            <Carousel className="w-80 h-60 my-4">
+              <CarouselContent>
+                {restaurant.images.map((imgUrl, index) => (
+                  <CarouselItem key={index} className="w-80 h-60">
+                    <img
+                      src={imgUrl}
+                      alt={`Restaurant Image ${index + 1}`}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100" />
+              <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100" />
+            </Carousel>
+          )}
+        </div>
         <div className="flex gap-4 mb-4 text-primary">
           <span className="flex gap-2 items-center">
             <ThumbsUp size={16} /> Likes: {restaurant?.like}
@@ -115,7 +149,7 @@ export default function RestaurantDetails() {
             <ThumbsDown size={16} /> Dislikes: {restaurant?.dislike}
           </span>
         </div>
-        {currentUser?.email !== restaurant?.creator_email ? (
+        {currentUser && currentUser?.email !== restaurant?.creator_email ? (
           <div className="flex gap-4 mt-4">
             <Button
               disabled={actionMade}

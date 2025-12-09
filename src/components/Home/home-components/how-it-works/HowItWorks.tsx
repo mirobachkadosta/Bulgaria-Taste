@@ -1,5 +1,6 @@
 import { HOW_IT_WORKS_VALUES } from "@/utility/staticValues";
 import { HeaderSection } from "../../../HeaderSection/HeaderSepartor";
+import { IconBg } from "@/components/icon-bg/IconBg";
 
 export default function HowItWorks() {
   return (
@@ -16,9 +17,11 @@ export default function HowItWorks() {
               key={index}
               className="flex flex-col justify-center items-center gap-3"
             >
-              <div className="bg-primary size-20 rounded-full flex items-center justify-center">
-                {item.icon}
-              </div>
+              <IconBg
+                className="bg-primary size-20"
+                icon={item.icon}
+                iconClassName="size-8 stroke-primary-content"
+              />
               <h3 className="font-bold">{item.header}</h3>
               <p>{item.description}</p>
             </div>
