@@ -116,3 +116,23 @@ h6 {
   left: 50%;
   transform: translateX(-50%);
 }
+
+.icon-link {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.icon-link:hover {
+  transform: scale(1.1);
+  text-decoration: none !important;
+}
+
+.icon-link::after,
+.icon-link:hover::after {
+  content: none !important;
+}
+
+a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

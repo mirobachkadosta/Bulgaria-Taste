@@ -1,4 +1,5 @@
 import { HeaderSection } from "@/components/HeaderSection/HeaderSepartor";
+import { IconBg } from "@/components/icon-bg/IconBg";
 import { WHY_US_VALUES } from "@/utility/staticValues";
 export default function WhyUsSection() {
   return (
@@ -17,9 +18,11 @@ export default function WhyUsSection() {
               className="relative flex flex-col gap-4 text-center"
             >
               <div className="flex flex-col items-center gap-3">
-                <div className="bg-primary size-20 rounded-full flex items-center justify-center">
-                  {section.icon}
-                </div>
+                <IconBg
+                  icon={section.icon}
+                  className="bg-primary size-20"
+                  iconClassName="stroke-primary-content size-8"
+                />
                 <h3 className="font-bold text-lg">{section.header}</h3>
                 <p>{section.description}</p>
               </div>
