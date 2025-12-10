@@ -15,6 +15,67 @@ Bulgaria Taste aims to connect food lovers with authentic Bulgarian restaurants 
 - **Backend**: Supabase (PostgreSQL database, Authentication, Storage)
 - **State Management**: Zustand
 
+## ⚙️ Setup Instructions
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn package manager
+- A Supabase account ([sign up here](https://supabase.com))
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/mirobachkadosta/Bulgaria-Taste.git
+   cd Bulgaria-Taste
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   Create a `.env` file in the root directory by copying the example file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then open the `.env` file and add your Supabase credentials:
+
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_KEY=your_supabase_anon_key
+   ```
+
+   **Where to find these values:**
+
+   - Log in to your [Supabase Dashboard](https://supabase.com/dashboard)
+   - Select your project (or create a new one)
+   - Go to **Project Settings** > **API**
+   - Copy the **Project URL** and paste it as `VITE_SUPABASE_URL`
+   - Copy the **anon/public key** and paste it as `VITE_SUPABASE_KEY`
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+   The application will be available at `http://localhost:5173`
+
+### Important Notes
+
+- ⚠️ **Never commit your `.env` file** - It contains sensitive credentials
+- The `.env.example` file is included in the repository as a template
+- Make sure to replace the empty values in your `.env` file with your actual Supabase credentials
+- If you don't have a Supabase project yet, create one at [supabase.com](https://supabase.com) and set up the required database tables (see Database Tables section below)
+
 ## 📋 Database Tables
 
 ### `restaurants`
@@ -81,8 +142,9 @@ Bulgaria Taste aims to connect food lovers with authentic Bulgarian restaurants 
 #### `/contact` - Contact Page
 
 **Goal**: Contact information for all the users if there is any questions, errors or missunderstanding.
-**Features**: 
-- UI with all the information that any user should need in every scenario. 
+**Features**:
+
+- UI with all the information that any user should need in every scenario.
 
 ### Authentication Routes
 

@@ -18,6 +18,7 @@ export type User = {
   id: string;
   email: string;
   logo: string | null;
+  name?: string | null;
 };
 
 export type AlertStatusType = {

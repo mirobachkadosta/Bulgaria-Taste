@@ -61,10 +61,21 @@ export default function Login() {
       return;
     }
     if (data.user) {
+      const { data: userData, error: fetchError } = await supabase
+        .from("user")
+        .select("name, logo")
+        .eq("email", data.user.email)
+        .single();
+
+      if (fetchError) {
+        console.error("Error fetching user data:", fetchError);
+      }
+
       setUser({
         id: data.user.id,
         email: data.user.email || "",
-        logo: null,
+        logo: userData?.logo || null,
+        name: userData?.name || null,
       });
       setAlertStatus({
         status: "success",
