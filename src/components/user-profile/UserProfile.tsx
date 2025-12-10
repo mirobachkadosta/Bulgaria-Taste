@@ -8,12 +8,24 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { validateImage, uploadToSupabase } from "@/utility/helpers";
 import { useNavigate } from "react-router";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 
 export default function UserProfile() {
   const [restaurants, setRestaurants] = useState<RestaurantCardType[]>([]);
   const [userName, setUserName] = useState("");
   const [userLogo, setUserLogo] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [deleteRestaurantId, setDeleteRestaurantId] = useState<number | null>(
+    null
+  );
+  const [showDeleteUserDialog, setShowDeleteUserDialog] = useState(false);
   const { setAlertStatus, user, isLoading, setIsLoading } = globalStore();
   const navigate = useNavigate();
 
@@ -162,7 +174,6 @@ export default function UserProfile() {
       setUserLogo(logoUrl);
       setLogoFile(null);
 
-      // Update the globalStore user object so UserMenuDropdown reflects changes immediately
       if (user) {
         globalStore.setState({
           user: {
@@ -188,12 +199,14 @@ export default function UserProfile() {
     }
   };
 
-  const handleDeleteRestaurant = async (id: number) => {
+  const handleDeleteRestaurant = async () => {
+    if (!deleteRestaurantId) return;
+
     try {
       const { error } = await supabase
         .from("restaurants")
         .delete()
-        .eq("id", id);
+        .eq("id", deleteRestaurantId);
 
       if (error) {
         setAlertStatus({
@@ -210,7 +223,8 @@ export default function UserProfile() {
         statusContent: "Ресторантът беше изтрит успешно!",
       });
 
-      setRestaurants(restaurants.filter((r) => r.id !== id));
+      setRestaurants(restaurants.filter((r) => r.id !== deleteRestaurantId));
+      setDeleteRestaurantId(null);
     } catch (err) {
       setAlertStatus({
         status: "error",
@@ -220,7 +234,8 @@ export default function UserProfile() {
     }
   };
 
-  const handleDeleteUser = async (email: string) => {
+  const handleDeleteUser = async () => {
+    const email = user?.email;
     if (!email) {
       setAlertStatus({
         status: "error",
@@ -231,6 +246,7 @@ export default function UserProfile() {
     }
 
     setIsLoading(true);
+    setShowDeleteUserDialog(false);
     try {
       const { error: restaurantsError } = await supabase
         .from("restaurants")
@@ -371,7 +387,7 @@ export default function UserProfile() {
             </Button>
             <Button
               type="button"
-              onClick={() => handleDeleteUser(user?.email || "")}
+              onClick={() => setShowDeleteUserDialog(true)}
               className="text-error-content bg-error"
               disabled={isLoading}
             >
@@ -388,7 +404,7 @@ export default function UserProfile() {
                 key={restaurant.id}
                 restaurant={restaurant}
                 showDelete={true}
-                onDelete={handleDeleteRestaurant}
+                onDelete={(id) => setDeleteRestaurantId(id)}
               />
             ))}
           </div>
@@ -398,6 +414,65 @@ export default function UserProfile() {
           </p>
         )}
       </div>
+
+      <Dialog
+        open={deleteRestaurantId !== null}
+        onOpenChange={(open) => !open && setDeleteRestaurantId(null)}
+      >
+        <DialogContent className="bg-base-100">
+          <DialogHeader>
+            <DialogTitle>Потвърждение за изтриване</DialogTitle>
+            <DialogDescription>
+              Сигурни ли сте, че искате да изтриете този ресторант? Това
+              действие е необратимо.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteRestaurantId(null)}
+            >
+              Отказ
+            </Button>
+            <Button
+              className="text-error-content bg-error hover:bg-error/90"
+              onClick={handleDeleteRestaurant}
+            >
+              Изтрий
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showDeleteUserDialog}
+        onOpenChange={setShowDeleteUserDialog}
+      >
+        <DialogContent className="bg-base-100">
+          <DialogHeader>
+            <DialogTitle>Изтриване на профил</DialogTitle>
+            <DialogDescription>
+              Сигурни ли сте, че искате да изтриете профила си? Това ще изтрие
+              всички ваши ресторанти и данни. Това действие е необратимо.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteUserDialog(false)}
+            >
+              Отказ
+            </Button>
+            <Button
+              className="text-error-content bg-error hover:bg-error/90"
+              onClick={handleDeleteUser}
+              disabled={isLoading}
+            >
+              Изтрий профил
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

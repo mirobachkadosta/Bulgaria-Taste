@@ -118,7 +118,6 @@ const Register = () => {
           return;
         }
 
-        // Fetch the user data including logo
         const { data: userData, error: fetchError } = await supabase
           .from("user")
           .select("name, logo")

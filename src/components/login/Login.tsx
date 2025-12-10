@@ -61,7 +61,6 @@ export default function Login() {
       return;
     }
     if (data.user) {
-      // Fetch the user data including logo and name
       const { data: userData, error: fetchError } = await supabase
         .from("user")
         .select("name, logo")
