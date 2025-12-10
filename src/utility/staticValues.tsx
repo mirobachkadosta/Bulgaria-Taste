@@ -69,20 +69,16 @@ export const FOOTER_VALUES = [
     header: "Полезно",
     items: [
       {
-        subHeader: "Често задавани въпроси",
-        link: "/",
-      },
-      {
-        subHeader: "Форма за контакт",
-        link: "/",
+        subHeader: "Контакти",
+        link: "/contact",
       },
       {
         subHeader: "Търси по населено място",
-        link: "/",
+        link: "/restaurants",
       },
       {
         subHeader: "Ресторанти",
-        link: "/",
+        link: "/restaurants",
       },
     ],
   },
@@ -91,28 +87,11 @@ export const FOOTER_VALUES = [
     items: [
       {
         subHeader: "Ресторанти",
-        link: "/",
-      },
-      {
-        subHeader: "Партньорска програма",
-        link: "/",
+        link: "/restaurants",
       },
       {
         subHeader: "Регитрирай бизнеса си",
-        link: "/",
-      },
-    ],
-  },
-  {
-    header: "Правни документи",
-    items: [
-      {
-        subHeader: "Условия за ползване",
-        link: "/",
-      },
-      {
-        subHeader: "Политика за поверителност",
-        link: "/",
+        link: "/register",
       },
     ],
   },

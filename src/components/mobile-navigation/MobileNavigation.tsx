@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { globalStore } from "@/store/globalStore";
-import DropdownMenuPopUp from "../user-menu-dropdown/UserMenuDropdown";
 import { useNavigate } from "react-router";
 import { NAV_DEFAULT_ELEMENTS } from "@/utility/constants";
 export default function MobileDrawerNav() {
@@ -22,15 +21,12 @@ export default function MobileDrawerNav() {
 
   return (
     <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen} direction="bottom">
-      <div className="flex gap-4">
-        {user ? <DropdownMenuPopUp /> : null}
-        <DrawerTrigger
-          aria-label="Отвори страничното навигация"
-          onClick={() => setIsMenuOpen(true)}
-        >
-          <Menu className="stroke-primary" />
-        </DrawerTrigger>
-      </div>
+      <DrawerTrigger
+        aria-label="Отвори страничното навигация"
+        onClick={() => setIsMenuOpen(true)}
+      >
+        <Menu className="stroke-primary" />
+      </DrawerTrigger>
 
       <DrawerOverlay onClick={() => setIsMenuOpen(false)} />
       <DrawerContent className="bg-base-100">

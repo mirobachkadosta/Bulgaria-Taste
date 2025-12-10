@@ -19,7 +19,7 @@ export default function UserMenuDropdown() {
 
   if (!user || !user.email) return null;
 
-  const displayName = (): string => {
+  const displayName = () => {
     if (user && user.email && user.email.length <= 3) {
       return "*".repeat(user.email.length);
     }
@@ -41,12 +41,12 @@ export default function UserMenuDropdown() {
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label="Отворете потребителското меню"
-          className="w-auto lg:max-h-[unset] max-w-10 max-h-10 min-h-10 border-neutral border hover:bg-base-200/90 text-primary inline-flex items-center px-4 py-2 cursor-pointer justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:border aria-invalid:border-destructive"
+          className="w-auto lg:h-auto h-10 border-neutral border hover:bg-base-200/90 text-primary inline-flex items-center lg:px-4 px-2 lg:py-2 py-1.5 cursor-pointer justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:border aria-invalid:border-destructive"
         >
           {user && user.logo ? (
             <img
               src={user.logo || undefined}
-              className="size-6"
+              className="size-6 rounded-full object-cover shrink-0"
               alt="Потребителска снимка на профила"
             />
           ) : (
@@ -70,7 +70,7 @@ export default function UserMenuDropdown() {
                 key={index}
                 style={{ display: "flex !important" }}
                 to={singleMenu.link}
-                className="px-2 w-full pl-0 after:content-none!"
+                className="px-2 w-full pl-0 no-underline!"
               >
                 <DropdownMenuItem className="text-sm text-primary">
                   {singleMenu.icon}

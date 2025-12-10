@@ -23,45 +23,40 @@ export default function Header() {
             Bulgaria Taste
           </Link>
         </div>
-        <div className="lg:flex items-center gap-3 hidden">
-          <nav className="hidden invisible lg:flex lg:visible lg:px-4 lg:gap-9 text-sm text-primary font-medium">
-            {NAV_DEFAULT_ELEMENTS.map((element, indx) => {
-              if (element.title === "Регистрация" && user) return null;
-              return (
-                <Link key={indx} to={element.url}>
-                  {element.title}
-                </Link>
-              );
-            })}
-          </nav>
-          {user ? (
-            <div className="lg:hidden flex items-center gap-3">
-              <ThemeToggleButton />
-              <UserMenuDropdown />
-            </div>
-          ) : null}
-        </div>
-        {!user && (
-          <div className="flex items-center gap-2 lg:hidden">
-            <ThemeToggleButton />
+        <nav className="hidden lg:flex lg:gap-9 text-sm text-primary font-medium">
+          {NAV_DEFAULT_ELEMENTS.map((element, indx) => {
+            if (element.title === "Регистрация" && user) return null;
+            return (
+              <Link key={indx} to={element.url}>
+                {element.title}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {!user ? (
+          <div className="flex lg:hidden">
+            <MobileDrawerNav />
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 lg:hidden">
+            <UserMenuDropdown />
             <MobileDrawerNav />
           </div>
         )}
-        <div className="lg:hidden flex gap-4">
-          {user?.email ? <MobileDrawerNav /> : null}
-        </div>
+
         <div className="hidden lg:flex lg:gap-4 lg:items-center">
           <ThemeToggleButton />
           {user?.email ? (
-            <div className="flex items-center gap-3">
+            <>
               <UserMenuDropdown />
               <Button
-                variant="default"
                 onClick={() => navigate("/add-restaurant")}
+                aria-label="Добави ресторант"
               >
-                Добавете ресторант
+                Добави ресторант
               </Button>
-            </div>
+            </>
           ) : (
             <Button
               onClick={() => navigate("/login")}

@@ -40,10 +40,10 @@ const Register = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password || !name) {
+    if (!email || !password) {
       setAlertStatus({
         status: "error",
-        statusHeader: "Моля, попълнете всички полета.",
+        statusHeader: "Полетата за имейл и парола са задължителни.",
       });
       return;
     }
@@ -118,10 +118,28 @@ const Register = () => {
           return;
         }
 
+        // Fetch the user data including logo
+        const { data: userData, error: fetchError } = await supabase
+          .from("user")
+          .select("name, logo")
+          .eq("email", data.user.email)
+          .single();
+
+        if (fetchError) {
+          setIsLoading(false);
+          setAlertStatus({
+            status: "error",
+            statusHeader: "Грешка при зареждане на профил.",
+            statusContent: fetchError.message,
+          });
+          return;
+        }
+
         setUser({
           id: data.user.id,
           email: data.user.email,
-          logo: logoUrl,
+          logo: userData?.logo || null,
+          name: userData?.name || null,
         });
       }
 
@@ -192,7 +210,7 @@ const Register = () => {
           </div>
           <Input
             type="text"
-            placeholder="Име"
+            placeholder="Име ( по избор )"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="border-primary border rounded-lg placeholder:text-secondary/50 text-primary"

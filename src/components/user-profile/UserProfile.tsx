@@ -7,6 +7,7 @@ import RestaurantCard from "../restaurants/restaurant-card/RestaurantCards";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { validateImage, uploadToSupabase } from "@/utility/helpers";
+import { useNavigate } from "react-router";
 
 export default function UserProfile() {
   const [restaurants, setRestaurants] = useState<RestaurantCardType[]>([]);
@@ -14,6 +15,7 @@ export default function UserProfile() {
   const [userLogo, setUserLogo] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const { setAlertStatus, user, isLoading, setIsLoading } = globalStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -117,14 +119,6 @@ export default function UserProfile() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!user?.email || !userName) {
-      setAlertStatus({
-        status: "error",
-        statusHeader: "Моля, попълнете името.",
-      });
-      return;
-    }
-
     setIsLoading(true);
     try {
       let logoUrl = userLogo;
@@ -153,7 +147,7 @@ export default function UserProfile() {
           name: userName,
           logo: logoUrl,
         })
-        .eq("email", user.email);
+        .eq("email", user?.email);
 
       if (updateError) {
         setIsLoading(false);
@@ -167,6 +161,18 @@ export default function UserProfile() {
 
       setUserLogo(logoUrl);
       setLogoFile(null);
+
+      // Update the globalStore user object so UserMenuDropdown reflects changes immediately
+      if (user) {
+        globalStore.setState({
+          user: {
+            ...user,
+            name: userName,
+            logo: logoUrl,
+          },
+        });
+      }
+
       setIsLoading(false);
       setAlertStatus({
         status: "success",
@@ -258,16 +264,15 @@ export default function UserProfile() {
         return;
       }
 
-      const { error: authError } = await supabase.auth.admin.deleteUser(
-        user?.id || ""
-      );
+      const { error: authError } = await supabase.rpc("delete_user");
 
       if (authError) {
         setIsLoading(false);
         setAlertStatus({
           status: "error",
           statusHeader: "Грешка",
-          statusContent: "Грешка при изтриване от auth: " + authError.message,
+          statusContent:
+            "Грешка при изтриване на акаунта: " + authError.message,
         });
         return;
       }
@@ -281,6 +286,7 @@ export default function UserProfile() {
       });
 
       await supabase.auth.signOut();
+      navigate("/");
     } catch (err) {
       setIsLoading(false);
       setAlertStatus({

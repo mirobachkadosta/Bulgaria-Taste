@@ -1,6 +1,6 @@
-import Header from "./components/header/Header";
+import Header from "./components/header/header";
 import { Route, Routes } from "react-router";
-import Home from "./components/home/Home";
+import Home from "./components/home/home";
 import "./global.css";
 import Footer from "./components/footer/Footer";
 import Alert from "./components/alert/Alert";
@@ -27,9 +27,24 @@ function App() {
   const { setUser } = globalStore();
 
   useEffect(() => {
+    const fetchUserWithLogo = async (email: string, userId: string) => {
+      const { data: userData } = await supabase
+        .from("user")
+        .select("name, logo")
+        .eq("email", email)
+        .single();
+
+      setUser({
+        id: userId,
+        email: email,
+        logo: userData?.logo || null,
+        name: userData?.name || null,
+      });
+    };
+
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
-        setUser({ ...data.user, email: data.user.email ?? null } as any);
+      if (data.user && data.user.email) {
+        fetchUserWithLogo(data.user.email, data.user.id);
       } else {
         setUser(null);
       }
@@ -37,11 +52,8 @@ function App() {
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        if (session?.user) {
-          setUser({
-            ...session.user,
-            email: session.user.email ?? null,
-          } as any);
+        if (session?.user && session.user.email) {
+          fetchUserWithLogo(session.user.email, session.user.id);
         } else {
           setUser(null);
         }
