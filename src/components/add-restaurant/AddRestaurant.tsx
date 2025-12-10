@@ -225,7 +225,7 @@ const AddRestaurant: React.FC = () => {
           <div>
             <label className="text-primary text-base">Име на ресторанта</label>
             <Input
-              className="border-primary placeholder:text-secondary/50 text=primary"
+              className="border-primary placeholder:text-secondary/50 text-primary"
               placeholder="Въведете име на ресторанта..."
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -240,7 +240,7 @@ const AddRestaurant: React.FC = () => {
                   ? locations.find((loc) => String(loc.id) === locationId)?.name
                   : "Избери"}
               </SelectTrigger>
-              <SelectContent className="bg-base-100">
+              <SelectContent className="bg-base-100 w-[300px] max-h-[300px] overflow-y-auto">
                 <SelectItem
                   value="default"
                   className="text-secondary/50 text-base hover:bg-base-300! cursor-pointer"
@@ -251,7 +251,7 @@ const AddRestaurant: React.FC = () => {
                   <SelectItem
                     key={loc.id}
                     value={String(loc.id)}
-                    className="text-secondary text-base hover:bg-base-300! cursor-pointer"
+                    className="text-primary! selection:text-primary! text-base hover:bg-base-300! cursor-pointer"
                   >
                     {loc.name}
                   </SelectItem>

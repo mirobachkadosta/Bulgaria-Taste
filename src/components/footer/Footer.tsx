@@ -4,7 +4,7 @@ import { Link } from "react-router";
 export default function Footer() {
   return (
     <footer className="full-width-section flex flex-col gap-8 bg-base-100 border-t border-neutral">
-      <div className="content-container grid xl:grid-cols-[1fr_318px_318px_318px] lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 gap-9 items-center px-4 py-8!">
+      <div className="content-container grid xl:grid-cols-[1fr_318px_318px] lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 gap-9 items-center px-4 py-8!">
         <span className="flex flex-col text-start">
           <h3>BulgariaTaste.bg</h3>
           <p>
